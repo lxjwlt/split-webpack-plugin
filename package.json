@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/lxjwlt/divide-webpack-plugin",
   "devDependencies": {
+    "jquery": "^3.2.1",
     "rimraf": "^2.6.1",
     "webpack": "^2.6.1"
   }
