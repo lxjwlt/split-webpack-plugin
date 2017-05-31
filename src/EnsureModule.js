@@ -2,6 +2,7 @@
 
 const Module = require("webpack/lib/Module");
 const RawSource = require("webpack-sources").RawSource;
+const Dependency = require('webpack/lib/Dependency');
 
 class EnsureModule extends Module {
 
@@ -14,7 +15,7 @@ class EnsureModule extends Module {
 		this.built = false;
 
 		// need dependencies to insert __webpack_require__
-		this.dependencies = options.chunks[0].modules[0].dependencies;
+        this.dependencies = [new Dependency()];
 	}
 
 	identifier() {
