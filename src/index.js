@@ -15,11 +15,15 @@ class DividePlugin {
 
     initOptions(options) {
 
+	    options = options || [];
+
 		if(!Array.isArray(options)) {
 			options = [options];
 		}
 
-		this.options = {};
+		this.options = {
+		    default: {}
+        };
 
 		options.forEach((option) => {
 			this.options[option.name || 'default'] = option;
@@ -51,11 +55,11 @@ class DividePlugin {
 
 					let moduleGroups = this.splitModules(chunk.modules, option);
 
-					let oldEntryModule = chunk.entryModule;
-
 					if (!moduleGroups.length) {
 						return;
 					}
+
+                    let oldEntryModule = chunk.entryModule;
 
                     this.removeChunk(chunk, compilation);
 

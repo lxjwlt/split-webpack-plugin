@@ -14,7 +14,7 @@ class EnsureModule extends Module {
 		this.ensureChunks = options.chunks;
 		this.built = false;
 
-		// need dependencies to insert __webpack_require__
+		// fake dependencies to insert __webpack_require__
         this.dependencies = [new Dependency()];
 	}
 
