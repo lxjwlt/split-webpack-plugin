@@ -92,7 +92,7 @@ class DividePlugin {
 	splitModules (modules, option) {
 		let groups = [];
 
-		if (!modules.length || option.division <= 1 || !option.maxSize) {
+		if (!modules.length || (option.division <= 1 && !option.maxSize)) {
 			return [];
 		}
 
