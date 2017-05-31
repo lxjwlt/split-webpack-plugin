@@ -1,5 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
 const DividePlugin = require('../..');
 
 module.exports = {
@@ -13,7 +12,7 @@ module.exports = {
   },
   plugins: [
     new DividePlugin({
-      maxSize: 1024
+        maxSize: 200 // KB
     })
   ]
 };

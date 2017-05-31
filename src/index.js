@@ -59,8 +59,8 @@ class DividePlugin {
 
 					let moduleGroups = this.splitModules(chunk.modules, option);
 
-					if (!moduleGroups.length) {
-						return;
+					if (moduleGroups.length <= 1) {
+						continue;
 					}
 
                     let oldEntryModule = chunk.entryModule;
@@ -112,24 +112,23 @@ class DividePlugin {
 			return groups;
 		}
 
-        let totalSize = 0;
-        let group;
-
 		for (let module of modules) {
 			let size = module.size();
+			let targetGroup = groups.filter(group => group.size + size < option.maxSize)[0];
 
-			totalSize = size + totalSize;
+			if (!targetGroup) {
+			    targetGroup = {
+                    size: 0,
+                    list: []
+                };
+			    groups.push(targetGroup);
+            }
 
-			if (totalSize > option.maxSize || !group) {
-				group = [];
-				groups.push(group);
-				totalSize = size;
-			}
-
-			group.push(module);
+            targetGroup.list.push(module);
+			targetGroup.size += size;
 		}
 
-		return groups;
+		return groups.map(group => group.list);
 	}
 
 	bundleModules (modules, oldChunk, index, compilation) {
