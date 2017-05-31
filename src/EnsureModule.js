@@ -49,9 +49,9 @@ class EnsureModule extends Module {
 		}
 
 		source.push(
-			`Promise.all(all).then(function () {
-				__webpack_require__(${this._oldEntryModule.id})
-			})`
+			`Promise.all(all).then(function () {`,
+			`    __webpack_require__(${this._oldEntryModule.id})`,
+			`}).catch(__webpack_require__.oe)`
 		);
 
 		return source.join('\n');
