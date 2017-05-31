@@ -26,6 +26,10 @@ class DividePlugin {
         };
 
 		options.forEach((option) => {
+		    option.divide = Number(option.divide) || 0;
+		    option.maxSize = Number(option.maxSize) || 0;
+		    option.maxSize = option.maxSize * 1024; // KB to B
+
 			this.options[option.name || 'default'] = option;
 		});
 
@@ -92,16 +96,16 @@ class DividePlugin {
 	splitModules (modules, option) {
 		let groups = [];
 
-		if (!modules.length || (option.division <= 1 && !option.maxSize)) {
+		if (!modules.length || (option.divide <= 1 && !option.maxSize)) {
 			return [];
 		}
 
-		if (option.division > 1) {
-			let num = Math.floor(modules.length / option.division);
+		if (option.divide > 1) {
+			let num = Math.floor(modules.length / option.divide);
 
 			if (num < modules.length) {
                 for (let i = 0; i < modules.length; i += num) {
-                    groups.push(modules.split(i, i + num));
+                    groups.push(modules.slice(i, i + num));
                 }
 			}
 
