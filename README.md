@@ -32,7 +32,7 @@ var webpackConfig = {
 
 Configuration:
 
-- `maxSize`: Maximun size of each partitioned file divide from each entry chunk
+- `maxSize`: Maximun size of each partitioned file divide from each entry chunk, measured in KB
 - `divide`: The number of chunks which each files will be divided into. divide-plugin will ignore `option.maxSize` config, while `option.divide` bigger than 1
 
 
