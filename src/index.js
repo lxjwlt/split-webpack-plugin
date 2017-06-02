@@ -16,6 +16,9 @@ class DividePlugin {
     initOptions (options) {
 
 	    options = Object.assign({
+            divideMode: function (count, divide) {
+                return Math.floor(count / divide);
+            },
             excludeChunks: []
         }, options);
 
@@ -112,7 +115,7 @@ class DividePlugin {
 		}
 
 		if (option.divide > 1) {
-			let num = Math.floor(modules.length / option.divide);
+			let num = option.divideMode(modules.length, option.divide);
 
 			if (num < modules.length) {
                 for (let i = 0; i < modules.length; i += num) {
