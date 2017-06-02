@@ -6,7 +6,7 @@ const Dependency = require('webpack/lib/Dependency');
 
 class EnsureModule extends Module {
 
-	constructor(options) {
+	constructor (options) {
 		super();
 		this._oldEntryModule = options.oldEntryModule;
 		this.context = options.context;
@@ -18,11 +18,11 @@ class EnsureModule extends Module {
         this.dependencies = [new Dependency()];
 	}
 
-	identifier() {
+	identifier () {
 		return `ensure ${this.name}`;
 	}
 
-	readableIdentifier() {
+	readableIdentifier () {
 		return `ensure ${this.name}`;
 	}
 
@@ -31,38 +31,43 @@ class EnsureModule extends Module {
 		super.disconnect();
 	}
 
-	build(options, compilation, resolver, fs, callback) {
+	build (options, compilation, resolver, fs, callback) {
 		this.built = true;
 		return callback();
 	}
 
-	_parseRawSource () {
+	_parseRawSource (withInfo) {
 		let ensureChunks = this.ensureChunks;
 		let source = [
 			'var all = [];'
 		];
 
 		for (let chunk of ensureChunks) {
+		    let chunkInfo = withInfo ? `/*! ${chunk.id}.js */` : '';
 			source.push(
-				`all.push(__webpack_require__.e(${chunk.id}).catch(__webpack_require__.oe));`
+				`all.push(__webpack_require__.e(${chunkInfo}${chunk.id}).catch(__webpack_require__.oe));`
 			);
 		}
 
+		let oldEntryModuleInfo = withInfo ?
+            `/*! ${this._oldEntryModule.rawRequest} */` : '';
+
 		source.push(
 			`Promise.all(all).then(function () {`,
-			`    __webpack_require__(${this._oldEntryModule.id})`,
+			`    __webpack_require__(${oldEntryModuleInfo}${this._oldEntryModule.id})`,
 			`}).catch(__webpack_require__.oe)`
 		);
 
 		return source.join('\n');
 	}
 
-	source() {
-		return new RawSource(this._parseRawSource());
+	source (template, outputOptions) {
+		this._source = new RawSource(this._parseRawSource(outputOptions.pathinfo));
+		return this._source;
 	}
 
-	size() {
-		return this._parseRawSource().length;
+	size () {
+		return this._source ? this._source.size() : -1;
 	}
 }
 
