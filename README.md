@@ -36,7 +36,31 @@ Configuration:
 - `divide`: The number of chunks which each files will be divided into. divide-plugin will ignore `option.maxSize` config, while `option.divide` bigger than 1
 - `chunks`: add only some chunks in division process
 - `excludeChunks`: skip these chunks from division process
+- `divideMode`: the way to divide modules, default value is:
 
+    ```javascript
+    {
+        divide: 3,
+        divideMode (modulesLength, divide) {
+            // divide === 3
+
+            return Math.floor(moduleLength / divide);
+        }
+    }
+    ```
+
+    if modules length is 4, `divideMode` will return 1, that means create 4 file each contains 1 module.
+
+    we use `Math.ceil`, let file contains as much modules as possible:
+
+    ```javascript
+    {
+        divide: 3,
+        divideMode (modulesLength, divide) {
+            return Math.ceil(moduleLength / divide);
+        }
+    }
+    ```
 
 [npm-url]: https://www.npmjs.com/package/divide-webpack-plugin
 [npm-image]: https://img.shields.io/npm/v/divide-webpack-plugin.svg

@@ -16,7 +16,7 @@ class DividePlugin {
     initOptions (options) {
 
 	    options = Object.assign({
-            divideMode: function (count, divide) {
+            divideMode (count, divide) {
                 return Math.floor(count / divide);
             },
             excludeChunks: []
