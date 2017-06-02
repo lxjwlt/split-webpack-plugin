@@ -8,31 +8,26 @@ let nextId = 0;
 
 class DividePlugin {
 
-	constructor(options) {
+	constructor (options) {
 		this.initOptions(options);
 		this.ident = __filename + (nextId++);
 	}
 
-    initOptions(options) {
+    initOptions (options) {
 
-	    options = options || [];
+	    options = Object.assign({
+            excludeChunks: []
+        }, options);
 
-		if(!Array.isArray(options)) {
-			options = [options];
-		}
+	    if (typeof options.chunks === 'string') {
+	        options.chunks = [options.chunks];
+        }
 
-		this.options = {
-		    default: {}
-        };
+        options.divide = Number(options.divide) || 0;
+        options.maxSize = Number(options.maxSize) || 0;
+        options.maxSize = options.maxSize * 1024; // KB to B
 
-		options.forEach((option) => {
-		    option.divide = Number(option.divide) || 0;
-		    option.maxSize = Number(option.maxSize) || 0;
-		    option.maxSize = option.maxSize * 1024; // KB to B
-
-			this.options[option.name || 'default'] = option;
-		});
-
+        this.options = options;
 	}
 
 	apply (compiler) {
@@ -50,14 +45,11 @@ class DividePlugin {
 
 				for (let chunk of currentChunks) {
 
-					// only entry chunk
-					if (!chunk.hasRuntime()) {
-						continue;
-					}
+					if (!this.isValidChunk(chunk)) {
+					    continue;
+                    }
 
-					const option = this.options[chunk.name] || this.options.default;
-
-					let moduleGroups = this.splitModules(chunk.modules, option);
+					let moduleGroups = this.splitModules(chunk.modules);
 
 					if (moduleGroups.length <= 1) {
 						continue;
@@ -93,8 +85,27 @@ class DividePlugin {
 		});
 	}
 
-	splitModules (modules, option) {
+    isValidChunk (chunk) {
+
+	    // exclude non-entry chunk
+        if (!chunk.hasRuntime()) {
+            return false;
+        }
+
+        if (this.options.excludeChunks.indexOf(chunk.name) > -1) {
+            return false;
+        }
+
+        if (this.options.chunks) {
+            return this.options.chunks.indexOf(chunk.name) > -1;
+        }
+
+        return true;
+    }
+
+	splitModules (modules) {
 		let groups = [];
+		let option = this.options;
 
 		if (!modules.length || (option.divide <= 1 && !option.maxSize)) {
 			return [];
