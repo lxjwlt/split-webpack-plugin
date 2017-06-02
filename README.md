@@ -34,7 +34,8 @@ Configuration:
 
 - `maxSize`: Maximun size of each partitioned file divide from each entry chunk, measured in KB
 - `divide`: The number of chunks which each files will be divided into. divide-plugin will ignore `option.maxSize` config, while `option.divide` bigger than 1
-
+- `chunks`: add only some chunks in division process
+- `excludeChunks`: skip these chunks from division process
 
 
 [npm-url]: https://www.npmjs.com/package/divide-webpack-plugin
