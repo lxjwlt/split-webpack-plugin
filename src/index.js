@@ -37,6 +37,10 @@ class DividePlugin {
 	apply (compiler) {
 
 		compiler.plugin('this-compilation', (compilation) => {
+
+		    // record the processed chunks
+		    this.entryChunkMap = {};
+
 			compilation.plugin(['optimize-chunks', 'optimize-extracted-chunks'], (chunks) => {
 
 				if(compilation[this.ident]) {
@@ -59,11 +63,51 @@ class DividePlugin {
 						continue;
 					}
 
+					this.entryChunkMap[chunk.name] = chunk;
+
 					this[bundleMethod](compiler, compilation, chunk, moduleGroups);
 				}
 
 				return true;
 			});
+
+			compilation.plugin('html-webpack-plugin-alter-chunks', (chunks, {plugin}) => {
+
+			    if (this.options.async) {
+			        return chunks;
+                }
+
+                let allChunks = compilation.getStats().toJson().chunks;
+                let targetChunks = plugin.options.chunks;
+			    let excludeChunks = plugin.options.excludeChunks;
+
+			    let ids = [];
+
+			    for (let name of Object.keys(this.entryChunkMap)) {
+
+			        if (excludeChunks.indexOf(name) >= 0 ||
+                        targetChunks && targetChunks.indexOf(name) < 0) {
+			            continue;
+                    }
+
+			        let parent = compilation.namedChunks[name];
+
+			        while (parent) {
+			            ids.push(parent.id);
+			            parent = parent.parents[0];
+                    }
+                }
+
+                chunks = allChunks.filter((chunk) => {
+			        return ids.indexOf(chunk.id) >= 0;
+                });
+
+			    return plugin.sortChunks(chunks, plugin.options.chunksSortMode);
+            });
+
+			compilation.plugin('done', () => {
+			    this.entryChunkMap = null;
+            });
 		});
 	}
 
