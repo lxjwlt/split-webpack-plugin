@@ -16,6 +16,7 @@ class DividePlugin {
     initOptions (options) {
 
 	    options = Object.assign({
+            async: true,
             divideMode (count, divide) {
                 return Math.floor(count / divide);
             },
@@ -44,9 +45,9 @@ class DividePlugin {
 
 				compilation[this.ident] = true;
 
-				let currentChunks = [...chunks];
+                let bundleMethod = this.options.async ? 'doAsync' : 'doSync';
 
-				for (let chunk of currentChunks) {
+				for (let chunk of [...chunks]) {
 
 					if (!this.isValidChunk(chunk)) {
 					    continue;
@@ -58,29 +59,7 @@ class DividePlugin {
 						continue;
 					}
 
-                    let oldEntryModule = chunk.entryModule;
-
-                    this.removeChunk(chunk, compilation);
-
-					let ensureChunk = compilation.addChunk(chunk.name);
-
-					for (let [index, group] of moduleGroups.entries()) {
-						let bundledModuleChunk = this.bundleModules(group, chunk, index, compilation);
-
-						bundledModuleChunk.parents = [ensureChunk];
-
-						ensureChunk.addChunk(bundledModuleChunk);
-					}
-
-                    this.createEntryModule(
-                    	compiler.context,
-						`divide-entry-module_${chunk.name}`,
-						ensureChunk,
-                        oldEntryModule,
-						compilation
-					);
-
-					this.replaceChunk(ensureChunk, chunk);
+					this[bundleMethod](compiler, compilation, chunk, moduleGroups);
 				}
 
 				return true;
@@ -104,6 +83,54 @@ class DividePlugin {
         }
 
         return true;
+    }
+
+    doSync (compiler, compilation, chunk, moduleGroups) {
+
+        moduleGroups = moduleGroups.reduce((groups, group) => {
+            if (group.indexOf(chunk.entryModule) < 0) {
+                groups.push(group);
+            }
+
+            return groups;
+        }, []);
+
+        let lastChunk = chunk;
+
+        for (let [index, group] of moduleGroups.entries()) {
+            let bundledModuleChunk = this.bundleModules(group, chunk, index, compilation);
+
+            lastChunk.parents = [bundledModuleChunk];
+
+            bundledModuleChunk.addChunk(lastChunk);
+
+            this.replaceChunk(bundledModuleChunk, lastChunk);
+        }
+    }
+
+    doAsync (compiler, compilation, chunk, moduleGroups) {
+
+        this.removeChunk(chunk, compilation);
+
+        let ensureChunk = compilation.addChunk(chunk.name);
+
+        for (let [index, group] of moduleGroups.entries()) {
+            let bundledModuleChunk = this.bundleModules(group, chunk, index, compilation);
+
+            bundledModuleChunk.parents = [ensureChunk];
+
+            ensureChunk.addChunk(bundledModuleChunk);
+        }
+
+        this.createEntryModule(
+            compiler.context,
+            `divide-entry-module_${chunk.name}`,
+            ensureChunk,
+            chunk.entryModule,
+            compilation
+        );
+
+        this.replaceChunk(ensureChunk, chunk);
     }
 
 	splitModules (modules) {
