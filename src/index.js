@@ -144,6 +144,8 @@ class DividePlugin {
 		if (option.divide > 1) {
 			let num = option.divideMode(modules.length, option.divide);
 
+			num = Math.min(num, 1);
+
 			if (num < modules.length) {
                 for (let i = 0; i < modules.length; i += num) {
                     groups.push(modules.slice(i, i + num));
