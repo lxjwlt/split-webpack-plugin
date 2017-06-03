@@ -86,7 +86,8 @@ class DividePlugin {
 			    for (let name of Object.keys(this.entryChunkMap)) {
 
 			        if (excludeChunks.indexOf(name) >= 0 ||
-                        targetChunks && targetChunks.indexOf(name) < 0) {
+                        targetChunks && targetChunks !== 'all' &&
+                        targetChunks.indexOf(name) < 0) {
 			            continue;
                     }
 
