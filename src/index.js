@@ -36,8 +36,8 @@ class DividePlugin {
 
 	apply (compiler) {
 
-		compiler.plugin('compilation', (compilation) => {
-			compilation.plugin('optimize-chunks', (chunks) => {
+		compiler.plugin('this-compilation', (compilation) => {
+			compilation.plugin(['optimize-chunks', 'optimize-extracted-chunks'], (chunks) => {
 
 				if(compilation[this.ident]) {
 					return;

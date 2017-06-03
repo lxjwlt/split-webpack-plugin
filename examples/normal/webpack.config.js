@@ -1,5 +1,7 @@
 const path = require('path');
 const DividePlugin = require('../..');
+const HtmlPlguin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
     entry: {
@@ -13,7 +15,18 @@ module.exports = {
     },
     plugins: [
         new DividePlugin({
-            maxSize: 200 // KB
+            // chunks: ['app'],
+            // divideMode: function (count, divide) {
+            //     return Math.ceil(count / divide);
+            // },
+            divide: 2,
+            async: false
+        }),
+        // new webpack.optimize.CommonsChunkPlugin({
+        //     name: 'verdor'
+        // }),
+        new HtmlPlguin({
+
         })
     ]
 };
