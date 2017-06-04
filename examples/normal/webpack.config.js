@@ -15,18 +15,18 @@ module.exports = {
     },
     plugins: [
         new DividePlugin({
-            // chunks: ['app'],
+            // chunks: ['cmd', 'app'],
             // divideMode: function (count, divide) {
             //     return Math.ceil(count / divide);
             // },
             divide: 2,
             async: false
         }),
-        // new webpack.optimize.CommonsChunkPlugin({
-        //     name: 'verdor'
-        // }),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'verdor'
+        }),
         new HtmlPlguin({
-
+            chunks: ['cmd']
         })
     ]
 };

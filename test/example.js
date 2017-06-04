@@ -6,6 +6,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
+const fs = require('fs-extra');
 var rimraf = require('rimraf');
 // var fs = require('fs');
 // var webpackMajorVersion = require('webpack/package.json').version.split('.')[0];
@@ -19,7 +20,7 @@ function runExample (exampleName) {
     var exampleOutput = path.join(OUTPUT_DIR, exampleName);
     // var fixturePath = path.join(examplePath, 'dist', 'webpack-' + webpackMajorVersion);
     // Clear old results
-    rimraf(exampleOutput, function () {
+    fs.remove(exampleOutput, function () {
         var options = require(path.join(examplePath, 'webpack.config.js'));
         options.context = examplePath;
         options.output.path = exampleOutput;

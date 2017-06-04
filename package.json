@@ -4,9 +4,11 @@
   "description": "Automates division process of files to serve your webpack bundles",
   "main": "./src/index.js",
   "scripts": {
-    "test": "node tests/example.js",
-    "mocha": "mocha test/*.spec.js",
-    "debug": "node --inspect --debug-brk tests/example.js"
+    "build": "node tests/example.js",
+    "mocha": "mocha",
+    "test": "mocha --recursive --reporter dot test/*.spec.js || exit 0",
+    "debug-build": "node --inspect --debug-brk tests/example.js",
+    "debug": "node --inspect --debug-brk ./node_modules/mocha/bin/_mocha"
   },
   "keywords": [
     "webpack",
@@ -29,10 +31,10 @@
   "homepage": "https://github.com/lxjwlt/divide-webpack-plugin",
   "devDependencies": {
     "chai": "^4.0.1",
+    "fs-extra": "^3.0.1",
     "html-webpack-plugin": "^2.28.0",
     "jquery": "^3.2.1",
     "mocha": "^3.4.2",
-    "rimraf": "^2.6.1",
     "webpack": "^2.6.1"
   }
 }
