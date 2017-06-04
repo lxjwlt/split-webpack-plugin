@@ -8,8 +8,7 @@
     "mocha": "mocha",
     "test": "mocha --recursive --reporter dot test/*.spec.js || exit 0",
     "debug-build": "node --inspect --debug-brk test/example.js",
-    "debug": "node --inspect --debug-brk ./node_modules/mocha/bin/_mocha",
-    "webpack": "webpack"
+    "debug": "node --inspect --debug-brk ./node_modules/mocha/bin/_mocha"
   },
   "keywords": [
     "webpack",
