@@ -41,4 +41,5 @@ jspm_packages
 
 # build
 dist
+!examples/*/dist
 test/temp
