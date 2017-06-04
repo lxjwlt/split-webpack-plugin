@@ -77,8 +77,15 @@ class DividePlugin {
 			        return chunks;
                 }
 
-                let allChunks = compilation.getStats().toJson().chunks;
                 let targetChunks = plugin.options.chunks;
+
+                // if html-webpack-plugin not specify chunks
+                if (targetChunks === 'all' || !targetChunks) {
+			        return chunks;
+                }
+
+                let allChunks = compilation.getStats().toJson().chunks;
+
 			    let excludeChunks = plugin.options.excludeChunks;
 
 			    let ids = [];
@@ -86,7 +93,6 @@ class DividePlugin {
 			    for (let name of Object.keys(this.entryChunkMap)) {
 
 			        if (excludeChunks.indexOf(name) >= 0 ||
-                        targetChunks && targetChunks !== 'all' &&
                         targetChunks.indexOf(name) < 0) {
 			            continue;
                     }
