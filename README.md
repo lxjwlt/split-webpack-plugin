@@ -2,11 +2,9 @@
 
 ![Node version][node-image] [![NPM version][npm-image]][npm-url]
 
-This is a [webpack](http://webpack.github.io/) plugin for Automating division process of files. That can be more helpful while we should divide all files manually, especially using multiple third-party libraries. You can simply divide your files by number which specify count of chunks or size of each chunk.
+This is a [webpack](http://webpack.github.io/) plugin for Automating division process of files. That can be more helpful while we should divide all files manually, especially using multiple third-party libraries. You can simply divide your files by size or the number of modules each file contains.
 
 ## Installation
-
-Install divide-webpack-plugin with npm:
 
 ```
 npm install divide-webpack-plugin -D
@@ -17,26 +15,49 @@ npm install divide-webpack-plugin -D
 Add the plugin to webpack config:
 
 ```javascript
-var DivideWebpackPlugin = require('divide-webpack-plugin');
+var DividePlugin = require('divide-webpack-plugin');
 var webpackConfig = {
 
     // ...
 
     plugins: [
-        new DivideWebpackPlugin({
-            maxSize: 512 // 512 KB
+        new DividePlugin({
+            size: 512 // 512 KB
         })
     ]
 };
 ```
 
-Configuration:
+## Configuration:
 
-- `size`: size of each partitioned file divide from each entry chunk, measured in KB
-- `divide`: The number of chunks which each files will be divided into. divide-plugin will ignore `option.maxSize` config, while `option.divide` bigger than 1
-- `chunks`: add only some chunks in division process
+- `size`: The size of each partitioned block, measured in KB
+- `divide`: The number of partitioned block which each files will be divided into. The plugin will ignore `option.size` config, when `option.divide` greater than 1
+- `async`: `true | false` default is `true`, the plugin uses `require.ensure` method to divide modules, convenient for us to insert every named entry chunks to html manually. check example: [sync](./examples/sync)
+
+    But if there applies [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin) in webpack, you can set `option.async` to false, html-webpack-plugin will put all segmented modules into html template automatically：
+
+    ```javascript
+    const DividePlugin = require('divide-webpack-plugin');
+    const HtmlPlugin = require('html-webpack-plugin');
+    var webpackConfig = {
+
+        // ...
+
+        plugins: [
+            new DivideWebpackPlugin({
+                size: 512 // 512 KB,
+                async: false
+            }),
+            new HtmlPlugin()
+        ]
+    };
+    ```
+
+    check example: [sync](./examples/sync).
+
+- `chunks`: add some chunks in division process
 - `excludeChunks`: skip these chunks from division process
-- `divideMode`: the way to divide modules, default value is:
+- `divideMode`: the way to divide modules, default value is as follow:
 
     ```javascript
     {
@@ -49,9 +70,9 @@ Configuration:
     }
     ```
 
-    if modules length is 4, `divideMode` will return 1, that means create 4 file each contains 1 module.
+    If there are 4 modules in total, `divideMode` will return 1, that means creating 4 files, each containing only 1 module.
 
-    we use `Math.ceil`, let file contains as much modules as possible:
+    we can use `Math.ceil` to allow each file to contain as many modules as possible:
 
     ```javascript
     {
@@ -61,6 +82,8 @@ Configuration:
         }
     }
     ```
+
+    check example: [divide-mode](./examples/divide-mode).
 
 [npm-url]: https://www.npmjs.com/package/divide-webpack-plugin
 [npm-image]: https://img.shields.io/npm/v/divide-webpack-plugin.svg
