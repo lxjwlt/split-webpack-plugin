@@ -93,7 +93,42 @@ describe('DivideWebpackPlugin', function () {
             }, done);
         });
 
-        it('divide result float part', function (done) {
+        it('divide when multiple entry chunks', function (done) {
+            testDividePlugin({
+                entry: {
+                    app: path.resolve(TEMP_DIR, './app'),
+                    login: path.resolve(TEMP_DIR, './login')
+                },
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin({
+                        divide: 2
+                    })
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true
+                    },
+                    './login': {
+                        './util': {
+                            './other': true,
+                            './test': true
+                        }
+                    }
+                },
+                expectedResults: {
+                    chunkNumber: 5,
+                    ensureChunkNumber: 2
+                }
+            }, done);
+        });
+
+        it('divide results float number', function (done) {
             testDividePlugin({
                 entry: path.resolve(TEMP_DIR, './app'),
                 output: {
@@ -115,6 +150,32 @@ describe('DivideWebpackPlugin', function () {
                 expectedResults: {
                     chunkNumber: 3,
                     ensureChunkNumber: 1
+                }
+            }, done);
+        });
+
+        it('invalid divide number', function (done) {
+            testDividePlugin({
+                entry: path.resolve(TEMP_DIR, './app'),
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin({
+                        divide: 1
+                    })
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true
+                    }
+                },
+                expectedResults: {
+                    chunkNumber: 1,
+                    ensureChunkNumber: 0
                 }
             }, done);
         });
@@ -151,17 +212,471 @@ describe('DivideWebpackPlugin', function () {
             }, done);
         });
 
+        it('invalid number return from divide mode', function (done) {
+            testDividePlugin({
+                entry: path.resolve(TEMP_DIR, './app'),
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin({
+                        divide: 2,
+                        divideMode () {
+                            return 0;
+                        }
+                    })
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true
+                    }
+                },
+                expectedResults: {
+                    chunkNumber: 3,
+                    ensureChunkNumber: 1
+                }
+            }, done);
+        });
+
+        it('big number return from divide mode', function (done) {
+            testDividePlugin({
+                entry: path.resolve(TEMP_DIR, './app'),
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin({
+                        divide: 2,
+                        divideMode () {
+                            return 100;
+                        }
+                    })
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true
+                    }
+                },
+                expectedResults: {
+                    chunkNumber: 1,
+                    ensureChunkNumber: 0
+                }
+            }, done);
+        });
+
+        it('add specific chunks', function (done) {
+            testDividePlugin({
+                entry: {
+                    app: path.resolve(TEMP_DIR, './app'),
+                    login: path.resolve(TEMP_DIR, './login')
+                },
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin({
+                        chunks: ['login'],
+                        divide: 2
+                    })
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true
+                    },
+                    './login': {
+                        './util': {
+                            './other': true,
+                            './test': true
+                        }
+                    }
+                },
+                expectedResults: {
+                    chunkNumber: 3,
+                    ensureChunkNumber: 1
+                }
+            }, done);
+        });
+
+        it('empty chunks', function (done) {
+            testDividePlugin({
+                entry: {
+                    app: path.resolve(TEMP_DIR, './app'),
+                    login: path.resolve(TEMP_DIR, './login')
+                },
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin({
+                        chunks: [],
+                        divide: 2
+                    })
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true
+                    },
+                    './login': {
+                        './util': {
+                            './other': true,
+                            './test': true
+                        }
+                    }
+                },
+                expectedResults: {
+                    chunkNumber: 2,
+                    ensureChunkNumber: 0
+                }
+            }, done);
+        });
+
+        it('empty exclude chunks', function (done) {
+            testDividePlugin({
+                entry: {
+                    app: path.resolve(TEMP_DIR, './app'),
+                    login: path.resolve(TEMP_DIR, './login')
+                },
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin({
+                        excludeChunks: [],
+                        divide: 2
+                    })
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true
+                    },
+                    './login': {
+                        './util': {
+                            './other': true,
+                            './test': true
+                        }
+                    }
+                },
+                expectedResults: {
+                    chunkNumber: 5,
+                    ensureChunkNumber: 2
+                }
+            }, done);
+        });
+
+        it('exclude chunks', function (done) {
+            testDividePlugin({
+                entry: {
+                    app: path.resolve(TEMP_DIR, './app'),
+                    login: path.resolve(TEMP_DIR, './login')
+                },
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin({
+                        excludeChunks: ['login'],
+                        divide: 2
+                    })
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true
+                    },
+                    './login': {
+                        './util': {
+                            './other': true,
+                            './test': true
+                        }
+                    }
+                },
+                expectedResults: {
+                    chunkNumber: 4,
+                    ensureChunkNumber: 1
+                }
+            }, done);
+        });
+
+        it('include and exclude chunks', function (done) {
+            testDividePlugin({
+                entry: {
+                    app: path.resolve(TEMP_DIR, './app'),
+                    login: path.resolve(TEMP_DIR, './login')
+                },
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin({
+                        chunks: ['login'],
+                        excludeChunks: ['login'],
+                        divide: 2
+                    })
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true
+                    },
+                    './login': {
+                        './util': {
+                            './other': true,
+                            './test': true
+                        }
+                    }
+                },
+                expectedResults: {
+                    chunkNumber: 2,
+                    ensureChunkNumber: 0
+                }
+            }, done);
+        });
+
+        it('by size', function (done) {
+            testDividePlugin({
+                entry: path.resolve(TEMP_DIR, './app'),
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin({
+                        size: 10
+                    })
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true
+                    }
+                },
+                sizes: {
+                    './app': 1,
+                    './common': 14,
+                    './test': 2
+                },
+                expectedResults: {
+                    chunkNumber: 2,
+                    ensureChunkNumber: 1
+                }
+            }, done);
+        });
+
+        it('by big size', function (done) {
+            testDividePlugin({
+                entry: path.resolve(TEMP_DIR, './app'),
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin({
+                        size: 1000
+                    })
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true
+                    }
+                },
+                sizes: {
+                    './app': 1,
+                    './common': 14,
+                    './test': 2
+                },
+                expectedResults: {
+                    chunkNumber: 1,
+                    ensureChunkNumber: 0
+                }
+            }, done);
+        });
+
+        it('invalid size', function (done) {
+            testDividePlugin({
+                entry: path.resolve(TEMP_DIR, './app'),
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin({
+                        size: 0
+                    })
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true
+                    }
+                },
+                sizes: {
+                    './app': 1,
+                    './common': 14,
+                    './test': 2
+                },
+                expectedResults: {
+                    chunkNumber: 1,
+                    ensureChunkNumber: 0
+                }
+            }, done);
+        });
+
+        it('divide and size', function (done) {
+            testDividePlugin({
+                entry: path.resolve(TEMP_DIR, './app'),
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin({
+                        size: 1,
+                        divide: 2
+                    })
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true,
+                        './other': true
+                    }
+                },
+                sizes: {
+                    './app': 1,
+                    './common': 14,
+                    './test': 2,
+                    './other': 3
+                },
+                expectedResults: {
+                    chunkNumber: 2,
+                    ensureChunkNumber: 1
+                }
+            }, done);
+        });
     });
+
+    describe('sync', function () {
+
+        it('default', function (done) {
+            testDividePlugin({
+                entry: path.resolve(TEMP_DIR, './app'),
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin({
+                        async: false
+                    })
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true
+                    }
+                },
+                expectedResults: {
+                    chunkNumber: 1,
+                    ensureChunkNumber: 0
+                }
+            }, done);
+        });
+
+        it('divide each module', function (done) {debugger;
+            testDividePlugin({
+                entry: path.resolve(TEMP_DIR, './app'),
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin({
+                        divide: 3,
+                        async: false
+                    })
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true
+                    }
+                },
+                expectedResults: {
+                    chunkNumber: 3,
+                    ensureChunkNumber: 0
+                }
+            }, done);
+        });
+
+        it('by size', function (done) {
+            testDividePlugin({
+                entry: path.resolve(TEMP_DIR, './app'),
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin({
+                        size: 10,
+                        async: false
+                    })
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true
+                    }
+                },
+                sizes: {
+                    './app': 1,
+                    './common': 14,
+                    './test': 2
+                },
+                expectedResults: {
+                    chunkNumber: 2,
+                    ensureChunkNumber: 0
+                }
+            }, done);
+        });
+
+    });
+
+    describe('multiple apply', function () {});
 
 });
 
 function testDividePlugin (webpackConfig, options, done) {
 
-    createResource(options.files).then(() => {
+    createResource(options.files, options.sizes).then(() => {
 
         webpack(webpackConfig, function (err, stats) {
-
-            debugger;
 
             let compilation = stats.compilation;
 
@@ -171,6 +686,14 @@ function testDividePlugin (webpackConfig, options, done) {
 
             assert.isFalse(stats.hasErrors());
             assert.isFalse(stats.hasWarnings());
+
+            let dividePlugin = compilation.options.plugins.filter((plugin) => plugin instanceof DividePlugin)[0];
+
+            let async = true;
+
+            if (dividePlugin) {
+                async = dividePlugin.options.async;
+            }
 
             let entry = stats.compilation.options.entry;
 
@@ -190,8 +713,38 @@ function testDividePlugin (webpackConfig, options, done) {
 
             assert.strictEqual(normalChunks.length, expectedResults.chunkNumber);
 
-            if (expectedResults.ensureChunkNumber) {
-                assert.strictEqual(ensureChunks.length, expectedResults.ensureChunkNumber);
+            assert.strictEqual(ensureChunks.length, expectedResults.ensureChunkNumber || 0);
+
+            if (!async) {
+                for (let chunkPath of Object.keys(options.files)) {
+                    chunkPath = path.resolve(TEMP_DIR, chunkPath);
+
+                    let topModule = compilation.modules.filter((module) =>
+                        module.resource && module.resource.indexOf(chunkPath) === 0)[0];
+
+                    assert.isOk(topModule);
+
+                    let topChunk = chunks.filter((chunk) => {
+                        return chunk.modules.indexOf(topModule) > -1;
+                    })[0];
+
+                    assert.isOk(topChunk);
+
+                    let allChunks = [];
+
+                    let subChunk = topChunk;
+
+                    while (subChunk) {
+                        allChunks.push(subChunk);
+                        subChunk = subChunk.parents[0];
+                    }
+
+                    testChunkChain(topChunk, allChunks, options.files, stats);
+                }
+
+                done();
+
+                return;
             }
 
             for (let chunk of ensureChunks) {
@@ -215,23 +768,7 @@ function testDividePlugin (webpackConfig, options, done) {
 
                 assert.include(chunk.entrypoints[0].chunks, chunk);
 
-                let moduleNames = chunk.chunks.reduce((names, subChunk) => {
-                    names = names.concat(subChunk.modules.map((module) => {
-                        return module.resource;
-                    }));
-                    return names;
-                }, []);
-
-                let filePath = Object.keys(options.files).filter((filePath) => {
-                    return entry[chunk.name] === path.resolve(TEMP_DIR, filePath);
-                })[0];
-
-                assert.sameMembers(
-                    flatObjectNames(options.files[filePath]).concat(filePath).map((filePath) => {
-                        return path.resolve(TEMP_DIR, filePath) + '.js';
-                    }),
-                    moduleNames
-                );
+                testChunkChain(chunk, chunk.chunks, options.files, stats);
 
             }
 
@@ -241,11 +778,34 @@ function testDividePlugin (webpackConfig, options, done) {
     });
 }
 
-function createResource (option) {
-    return fs.ensureDir(TEMP_DIR).then(() => createFiles(option));
+function testChunkChain (topChunk, chunks, files, stats) {
+    let moduleNames = chunks.reduce((names, subChunk) => {
+        return names.concat(subChunk.modules.map((module) => module.resource));
+    }, []);
+
+    let entry = stats.compilation.options.entry;
+
+    entry = typeof entry === 'string' ? {
+        main: entry
+    } : entry;
+
+    let filePath = Object.keys(files).filter((filePath) => {
+        return entry[topChunk.name] === path.resolve(TEMP_DIR, filePath);
+    })[0];
+
+    assert.sameMembers(
+        flatObjectNames(files[filePath]).concat(filePath).map((filePath) => {
+            return path.resolve(TEMP_DIR, filePath) + '.js';
+        }),
+        moduleNames
+    );
 }
 
-function createFiles (option) {
+function createResource (option, sizes) {
+    return fs.ensureDir(TEMP_DIR).then(() => createFiles(option, sizes));
+}
+
+function createFiles (option, sizes) {
     let all = [];
 
     if (typeof option !== 'object') {
@@ -259,11 +819,14 @@ function createFiles (option) {
 
         let filename = filePath.replace(/[^a-z0-9\-]+/, '');
 
-        data.push(`exports.name = "${filename}"`);
+        data.push(
+            sizes && sizes[filePath] ? `"${'a'.repeat(sizes[filePath] * 1024)}"` : '',
+            `exports.name = "${filename}"`
+        );
 
         all.push(
             fs.outputFile(path.resolve(TEMP_DIR, `${filePath}.js`), data.join('\n')),
-            createFiles(dependency)
+            createFiles(dependency, sizes)
         );
     }
 
