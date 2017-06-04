@@ -35,9 +35,6 @@ function runExample (exampleName, done) {
         options.output.path = exampleOutput;
 
         webpack(options, function (err, stats) {
-            console.log(stats.toString({
-                colors: true
-            }));
 
             const res = dircompare.compareSync(fixturePath, exampleOutput, {
                 compareSize: true
