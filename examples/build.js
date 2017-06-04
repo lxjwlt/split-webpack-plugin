@@ -14,12 +14,9 @@ examples.forEach(function (exampleName) {
 
     fse.remove(distPath);
 
-    Object.assign(config, {
-        context: examplePath,
-        output: {
-            path: distPath
-        }
-    });
+    config.context = examplePath;
+
+    config.output.path = distPath;
 
     webpack(config, function (err, stats) {
         console.log(stats.toString({
