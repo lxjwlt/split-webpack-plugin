@@ -28,8 +28,8 @@ class DividePlugin {
         }
 
         options.divide = Number(options.divide) || 0;
-        options.maxSize = Number(options.maxSize) || 0;
-        options.maxSize = options.maxSize * 1024; // KB to B
+        options.size = Number(options.size) || 0;
+        options.size = options.size * 1024; // KB to B
 
         this.options = options;
 	}
@@ -150,6 +150,8 @@ class DividePlugin {
             bundledModuleChunk.addChunk(lastChunk);
 
             this.replaceChunk(bundledModuleChunk, lastChunk);
+
+            lastChunk = bundledModuleChunk;
         }
     }
 
@@ -182,7 +184,7 @@ class DividePlugin {
 		let groups = [];
 		let option = this.options;
 
-		if (!modules.length || (option.divide <= 1 && !option.maxSize)) {
+		if (!modules.length || (option.divide <= 1 && !option.size)) {
 			return [];
 		}
 
@@ -202,7 +204,7 @@ class DividePlugin {
 
 		for (let module of modules) {
 			let size = module.size();
-			let targetGroup = groups.filter(group => group.size + size < option.maxSize)[0];
+			let targetGroup = groups.filter(group => group.size + size < option.size)[0];
 
 			if (!targetGroup) {
 			    targetGroup = {

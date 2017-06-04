@@ -4,10 +4,10 @@
   "description": "Automates division process of files to serve your webpack bundles",
   "main": "./src/index.js",
   "scripts": {
-    "build": "node tests/example.js",
+    "build": "node test/example.js",
     "mocha": "mocha",
     "test": "mocha --recursive --reporter dot test/*.spec.js || exit 0",
-    "debug-build": "node --inspect --debug-brk tests/example.js",
+    "debug-build": "node --inspect --debug-brk test/example.js",
     "debug": "node --inspect --debug-brk ./node_modules/mocha/bin/_mocha"
   },
   "keywords": [
