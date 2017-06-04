@@ -2,7 +2,7 @@
   "name": "divide-webpack-plugin",
   "version": "0.0.1",
   "description": "Automates division process of files to serve your webpack bundles",
-  "main": "./src/index.js",
+  "main": "src/index.js",
   "scripts": {
     "build-example": "node examples/build.js",
     "mocha": "mocha",
@@ -21,6 +21,9 @@
   "files": [
     "src"
   ],
+  "bugs": {
+    "url": "https://github.com/lxjwlt/divide-webpack-plugin/issues"
+  },
   "engines": {
     "node": ">= 6.9.5"
   },
@@ -37,5 +40,8 @@
     "jquery": "^3.2.1",
     "mocha": "^3.4.2",
     "webpack": "^2.6.1"
+  },
+  "peerDependencies": {
+    "webpack": ">=2.0.0"
   }
 }
