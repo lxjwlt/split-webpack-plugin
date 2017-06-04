@@ -607,7 +607,7 @@ describe('DivideWebpackPlugin', function () {
             }, done);
         });
 
-        it('divide each module', function (done) {debugger;
+        it('divide each module', function (done) {
             testDividePlugin({
                 entry: path.resolve(TEMP_DIR, './app'),
                 output: {
@@ -666,9 +666,118 @@ describe('DivideWebpackPlugin', function () {
             }, done);
         });
 
+        it('3parts', function (done) {
+            testDividePlugin({
+                entry: path.resolve(TEMP_DIR, './app'),
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin({
+                        size: 100,
+                        async: false
+                    })
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true,
+                        'jquery': true
+                    }
+                },
+                sizes: {
+                    './app': 1,
+                    './common': 14,
+                    './test': 2
+                },
+                expectedResults: {
+                    chunkNumber: 2,
+                    ensureChunkNumber: 0
+                }
+            }, done);
+        });
+
     });
 
-    describe('multiple apply', function () {});
+    describe('multiple apply', function () {
+
+        it('default', function (done) {
+            testDividePlugin({
+                entry: path.resolve(TEMP_DIR, './app'),
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin(),
+                    new DividePlugin()
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true
+                    }
+                },
+                expectedResults: {
+                    chunkNumber: 1,
+                    ensureChunkNumber: 0
+                }
+            }, done);
+        });
+
+        it('different options', function (done) {
+            testDividePlugin({
+                entry: {
+                    app: path.resolve(TEMP_DIR, './app'),
+                    login: path.resolve(TEMP_DIR, './login')
+                },
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin({
+                        chunks: ['app'],
+                        divide: 2
+                    }),
+                    new DividePlugin({
+                        chunks: ['login'],
+                        size: 10
+                    })
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true,
+                        './lib': true
+                    },
+                    './login': {
+                        './util': {
+                            './other': true,
+                            './test': true,
+                            './lib': true
+                        }
+                    }
+                },
+                sizes: {
+                    './login': 3,
+                    './util': 67,
+                    './other': 5,
+                    './test': 12,
+                    './lib': 1
+                },
+                expectedResults: {
+                    chunkNumber: 5,
+                    ensureChunkNumber: 2
+                }
+            }, done);
+        });
+
+    });
 
 });
 
@@ -795,7 +904,9 @@ function testChunkChain (topChunk, chunks, files, stats) {
 
     assert.sameMembers(
         flatObjectNames(files[filePath]).concat(filePath).map((filePath) => {
-            return path.resolve(TEMP_DIR, filePath) + '.js';
+            return filePath.match(/^\./) ?
+                path.resolve(TEMP_DIR, filePath) + '.js' :
+                require.resolve(filePath);
         }),
         moduleNames
     );
@@ -813,6 +924,12 @@ function createFiles (option, sizes) {
     }
 
     for (let filePath of Object.keys(option)) {
+
+        // skip 3parts
+        if (!filePath.match(/^\./)) {
+            continue;
+        }
+
         let dependency = option[filePath];
         let data = typeof dependency === 'object' ?
             Object.keys(dependency).map((subPath) => `require("${subPath}")`) : [];
