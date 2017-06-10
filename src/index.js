@@ -3,6 +3,7 @@
 'use strict';
 
 const EnsureModule = require('./EnsureModule');
+const ConcatSource = require("webpack-sources").ConcatSource;
 
 let nextId = 0;
 
@@ -49,7 +50,7 @@ class DividePlugin {
 
 				compilation[this.ident] = true;
 
-                let bundleMethod = this.options.async ? 'doAsync' : 'doSync';
+				this.initEvent(compilation);
 
 				for (let chunk of [...chunks]) {
 
@@ -57,13 +58,17 @@ class DividePlugin {
 					    continue;
                     }
 
+                    let bundleMethod = this.options.async ? 'doAsync' : 'doSync';
+
+					if (this.isAsyncChunk(chunk)) {
+					    bundleMethod = 'doAsyncChunk';
+                    }
+
 					let moduleGroups = this.splitModules(chunk.modules);
 
 					if (moduleGroups.length <= 1) {
 						continue;
 					}
-
-					this.entryChunkMap[chunk.name] = chunk;
 
 					this[bundleMethod](compiler, compilation, chunk, moduleGroups);
 				}
@@ -118,25 +123,109 @@ class DividePlugin {
 		});
 	}
 
+	initEvent (compilation) {
+
+        compilation.mainTemplate.plugin('bootstrap', function (source, chunk) {
+
+            if(chunk.chunks.length > 0) {
+                return this.asString([
+                    source,
+                    '',
+                    'var __waitResolveChunks = {};',
+                    `window.__webpackWaitResolve = function (chunkIds) {`,
+                    this.indent([
+                        'for(var i = 0;i < chunkIds.length; i++) {',
+                        this.indent([
+                            'var chunkId = chunkIds[i];',
+                            'if(installedChunks[chunkId]) {',
+                            this.indent([
+                                '__waitResolveChunks[chunkId] = installedChunks[chunkId];',
+                                'installedChunks[chunkId] = 0;'
+                            ]),
+                            '}'
+                        ]),
+                        '}'
+                    ]),
+                    "};"
+                ]);
+            }
+
+            return source;
+        });
+
+        compilation.chunkTemplate.plugin('render', function (oldSource, chunk) {
+
+            if (!chunk.__isAsync) {
+                return oldSource;
+            }
+
+            let source = new ConcatSource();
+
+            source.add(`__webpackWaitResolve(${JSON.stringify(chunk.ids)});`);
+
+            source.add('');
+
+            source.add(oldSource);
+
+            return source;
+        });
+
+        compilation.mainTemplate.plugin('require-extensions', function (source) {
+            return this.asString([
+                source,
+                '',
+                `${this.requireFn}._resolve = function (chunkIds) {`,
+                this.indent([
+                    'var chunkId, i = 0, resolves = [];',
+                    'for(;i < chunkIds.length; i++) {',
+                    this.indent([
+                        'chunkId = chunkIds[i];',
+                        'if(__waitResolveChunks[chunkId]) {',
+                        this.indent([
+                            'resolves.push(__waitResolveChunks[chunkId][0]);'
+                        ]),
+                        '}',
+                        'installedChunks[chunkId] = undefined;',
+                        '__waitResolveChunks[chunkId] = undefined;'
+                    ]),
+                    '}',
+                    'while(resolves.length) {',
+                    this.indent([
+                        'resolves.shift()();'
+                    ]),
+                    '}'
+                ]),
+                '};'
+            ]);
+        });
+
+    }
+
     isValidChunk (chunk) {
 
-	    // exclude non-entry chunk
-        if (!chunk.hasRuntime()) {
+	    // only entry or async chunk
+        if (!chunk.hasRuntime() && !this.isAsyncChunk(chunk)) {
             return false;
         }
 
-        if (this.options.excludeChunks.indexOf(chunk.name) > -1) {
+        if (chunk.name && this.options.excludeChunks.indexOf(chunk.name) > -1) {
             return false;
         }
 
-        if (this.options.chunks) {
+        if (chunk.name && this.options.chunks) {
             return this.options.chunks.indexOf(chunk.name) > -1;
         }
 
         return true;
     }
 
+    isAsyncChunk (chunk) {
+	    return !chunk.hasRuntime() && !chunk.name;
+    }
+
     doSync (compiler, compilation, chunk, moduleGroups) {
+
+        this.entryChunkMap[chunk.name] = chunk;
 
         moduleGroups = moduleGroups.reduce((groups, group) => {
             if (group.indexOf(chunk.entryModule) < 0) {
@@ -161,7 +250,31 @@ class DividePlugin {
         }
     }
 
+    doAsyncChunk (compiler, compilation, chunk, moduleGroups) {
+
+        chunk.__isAsync = true;
+
+        for (let [index, group] of moduleGroups.entries()) {
+            let bundledModuleChunk = this.bundleModules(group, chunk, index, compilation);
+
+            bundledModuleChunk.parents = [chunk];
+
+            chunk.addChunk(bundledModuleChunk);
+        }
+
+        this.createEntryModule(
+            compiler.context,
+            null,
+            chunk,
+            chunk.entryModule,
+            compilation,
+            true
+        );
+    }
+
     doAsync (compiler, compilation, chunk, moduleGroups) {
+
+        this.entryChunkMap[chunk.name] = chunk;
 
         this.removeChunk(chunk, compilation);
 
@@ -228,7 +341,8 @@ class DividePlugin {
 	}
 
 	bundleModules (modules, oldChunk, index, compilation) {
-		let newChunk = compilation.addChunk(`divide-chunk_${oldChunk.name}${index}`);
+	    let chunkName = oldChunk.name ? `divide-chunk_${oldChunk.name}${index}` : '';
+		let newChunk = compilation.addChunk(chunkName);
 
 		for (let module of modules) {
 			oldChunk.moveModule(module, newChunk);
@@ -251,12 +365,14 @@ class DividePlugin {
 		delete compilation.namedChunks[chunk.name];
 	}
 
-	createEntryModule (context, name, chunk, oldEntryModule, compilation) {
+	createEntryModule (context, name, chunk, oldEntryModule, compilation, needResolve) {
         let ensureModule = new EnsureModule({
             context: context,
             name: name,
             chunks: chunk.chunks,
-            oldEntryModule: oldEntryModule
+            oldEntryModule: oldEntryModule,
+            chunk: chunk,
+            needResolve: needResolve
         });
 
         compilation.addModule(ensureModule);

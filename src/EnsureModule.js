@@ -10,9 +10,11 @@ class EnsureModule extends Module {
 		super();
 		this._oldEntryModule = options.oldEntryModule;
 		this.context = options.context;
-		this.name = options.name;
+		this.name = options.name || String(Math.random()).replace(/\D/g, '');
+		this._chunk = options.chunk;
 		this.ensureChunks = options.chunks;
 		this.built = false;
+		this._needResolve = options.needResolve;
 
 		// fake dependencies to insert __webpack_require__
         this.dependencies = [new Dependency()];
@@ -49,14 +51,24 @@ class EnsureModule extends Module {
 			);
 		}
 
-		let oldEntryModuleInfo = withInfo ?
-            `/*! ${this._oldEntryModule.rawRequest} */` : '';
+		if (this._needResolve) {
+            source.push(
+                `Promise.all(all).then(function () {`,
+                `    __webpack_require__._resolve(${JSON.stringify(this._chunk.ids)})`,
+                `}).catch(__webpack_require__.oe)`
+            );
+        }
 
-		source.push(
-			`Promise.all(all).then(function () {`,
-			`    __webpack_require__(${oldEntryModuleInfo}${this._oldEntryModule.id})`,
-			`}).catch(__webpack_require__.oe)`
-		);
+		if (this._oldEntryModule) {
+            let oldEntryModuleInfo = withInfo ?
+                `/*! ${this._oldEntryModule.rawRequest} */` : '';
+
+            source.push(
+                `Promise.all(all).then(function () {`,
+                `    __webpack_require__(${oldEntryModuleInfo}${this._oldEntryModule.id})`,
+                `}).catch(__webpack_require__.oe)`
+            );
+        }
 
 		return source.join('\n');
 	}
