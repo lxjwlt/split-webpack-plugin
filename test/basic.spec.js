@@ -777,6 +777,56 @@ describe('DivideWebpackPlugin', function () {
             }, done);
         });
 
+        it('different mode', function (done) {
+            testDividePlugin({
+                entry: {
+                    app: path.resolve(TEMP_DIR, './app'),
+                    login: path.resolve(TEMP_DIR, './login')
+                },
+                output: {
+                    path: OUTPUT_DIR,
+                    filename: '[name].js'
+                },
+                plugins: [
+                    new DividePlugin({
+                        chunks: ['app'],
+                        divide: 2,
+                        async: false
+                    }),
+                    new DividePlugin({
+                        chunks: ['login'],
+                        size: 10
+                    })
+                ]
+            }, {
+                files: {
+                    './app': {
+                        './common': true,
+                        './test': true,
+                        './lib': true
+                    },
+                    './login': {
+                        './util': {
+                            './other': true,
+                            './test': true,
+                            './lib': true
+                        }
+                    }
+                },
+                sizes: {
+                    './login': 3,
+                    './util': 67,
+                    './other': 5,
+                    './test': 12,
+                    './lib': 1
+                },
+                expectedResults: {
+                    chunkNumber: 5,
+                    ensureChunkNumber: 1
+                }
+            }, done);
+        });
+
     });
 
 });
@@ -796,89 +846,96 @@ function testDividePlugin (webpackConfig, options, done) {
             assert.isFalse(stats.hasErrors());
             assert.isFalse(stats.hasWarnings());
 
-            let dividePlugin = compilation.options.plugins.filter((plugin) => plugin instanceof DividePlugin)[0];
-
-            let async = true;
-
-            if (dividePlugin) {
-                async = dividePlugin.options.async;
-            }
-
             let entry = stats.compilation.options.entry;
 
             entry = typeof entry === 'string' ? {
                 main: entry
             } : entry;
 
-            let chunks = stats.compilation.chunks;
+            let dividePlugins = compilation.options.plugins.filter((plugin) => plugin instanceof DividePlugin);
 
-            let normalChunks = chunks.filter((chunk) => {
-                return chunk.modules.every((module) => !(module instanceof EnsureModule));
-            });
+            for (let dividePlugin of dividePlugins) {
+                let async = true;
 
-            let ensureChunks = chunks.filter((chunk) => {
-                return chunk.modules.every((module) => module instanceof EnsureModule);
-            });
-
-            assert.strictEqual(normalChunks.length, expectedResults.chunkNumber);
-
-            assert.strictEqual(ensureChunks.length, expectedResults.ensureChunkNumber || 0);
-
-            if (!async) {
-                for (let chunkPath of Object.keys(options.files)) {
-                    chunkPath = path.resolve(TEMP_DIR, chunkPath);
-
-                    let topModule = compilation.modules.filter((module) =>
-                        module.resource && module.resource.indexOf(chunkPath) === 0)[0];
-
-                    assert.isOk(topModule);
-
-                    let topChunk = chunks.filter((chunk) => {
-                        return chunk.modules.indexOf(topModule) > -1;
-                    })[0];
-
-                    assert.isOk(topChunk);
-
-                    let allChunks = [];
-
-                    let subChunk = topChunk;
-
-                    while (subChunk) {
-                        allChunks.push(subChunk);
-                        subChunk = subChunk.parents[0];
-                    }
-
-                    testChunkChain(topChunk, allChunks, options.files, stats);
+                if (dividePlugin) {
+                    async = dividePlugin.options.async;
                 }
 
-                done();
+                let chunks = stats.compilation.chunks;
 
-                return;
-            }
-
-            for (let chunk of ensureChunks) {
-                let content = chunk.modules[0]._source.source();
-                let subChunkName = `divide-chunk_${chunk.name}`;
-
-                let subChunks = normalChunks.filter((normalChunk) =>
-                    normalChunk.name.indexOf(subChunkName) === 0);
-
-                assert.sameMembers(subChunks, chunk.chunks);
-
-                let entryModule = compilation.modules.filter((module) => {
-                    return module.resource && module.resource.indexOf(entry[chunk.name]) === 0;
-                })[0];
-
-                subChunks.forEach((subChunk) => {
-                    assert.include(content, `__webpack_require__.e(${subChunk.id})`);
+                let normalChunks = chunks.filter((chunk) => {
+                    return chunk.modules.every((module) => !(module instanceof EnsureModule));
                 });
 
-                assert.include(content, `__webpack_require__(${entryModule.id})`);
+                let ensureChunks = chunks.filter((chunk) => {
+                    return chunk.modules.every((module) => module instanceof EnsureModule);
+                });
 
-                assert.include(chunk.entrypoints[0].chunks, chunk);
+                assert.strictEqual(normalChunks.length, expectedResults.chunkNumber);
 
-                testChunkChain(chunk, chunk.chunks, options.files, stats);
+                assert.strictEqual(ensureChunks.length, expectedResults.ensureChunkNumber || 0);
 
+                if (!async) {
+                    let files = !dividePlugin.options.chunks ?
+                        Object.keys(options.files) : dividePlugin.options.chunks.map((path) => {
+                            return entry[path];
+                        });
+
+                    for (let chunkPath of files) {
+                        chunkPath = path.resolve(TEMP_DIR, chunkPath);
+
+                        let topModule = compilation.modules.filter((module) =>
+                        module.resource && module.resource.indexOf(chunkPath) === 0)[0];
+
+                        assert.isOk(topModule);
+
+                        let topChunk = chunks.filter((chunk) => {
+                            return chunk.modules.indexOf(topModule) > -1;
+                        })[0];
+
+                        assert.isOk(topChunk);
+
+                        let allChunks = [];
+
+                        let subChunk = topChunk;
+
+                        while (subChunk) {
+                            allChunks.push(subChunk);
+                            subChunk = subChunk.parents[0];
+                        }
+
+                        testChunkChain(topChunk, allChunks, options.files, stats);
+                    }
+
+                    done();
+
+                    return;
+                }
+
+                for (let chunk of ensureChunks) {
+                    let content = chunk.modules[0]._source.source();
+                    let subChunkName = `divide-chunk_${chunk.name}`;
+
+                    let subChunks = normalChunks.filter((normalChunk) =>
+                    normalChunk.name.indexOf(subChunkName) === 0);
+
+                    assert.sameMembers(subChunks, chunk.chunks);
+
+                    let entryModule = compilation.modules.filter((module) => {
+                        return module.resource && module.resource.indexOf(entry[chunk.name]) === 0;
+                    })[0];
+
+                    subChunks.forEach((subChunk) => {
+                        assert.include(content, `__webpack_require__.e(${subChunk.id})`);
+                    });
+
+                    assert.include(content, `__webpack_require__(${entryModule.id})`);
+
+                    assert.include(chunk.entrypoints[0].chunks, chunk);
+
+                    testChunkChain(chunk, chunk.chunks, options.files, stats);
+
+                }
             }
 
             done();
