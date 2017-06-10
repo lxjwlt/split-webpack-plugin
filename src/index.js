@@ -6,6 +6,7 @@ const EnsureModule = require('./EnsureModule');
 const ConcatSource = require("webpack-sources").ConcatSource;
 
 let nextId = 0;
+let initEvent = false;
 
 class DividePlugin {
 
@@ -125,12 +126,19 @@ class DividePlugin {
 
 	initEvent (compilation) {
 
+	    if (initEvent) {
+	        return;
+        }
+
+        initEvent = true;
+
         compilation.mainTemplate.plugin('bootstrap', function (source, chunk) {
 
             if(chunk.chunks.length > 0) {
                 return this.asString([
                     source,
                     '',
+                    'var __parentWaitResolve = window.__webpackWaitResolve;',
                     'var __waitResolveChunks = {};',
                     `window.__webpackWaitResolve = function (chunkIds) {`,
                     this.indent([
@@ -144,7 +152,8 @@ class DividePlugin {
                             ]),
                             '}'
                         ]),
-                        '}'
+                        '}',
+                        'if(__parentWaitResolve) __parentWaitResolve(chunkIds);'
                     ]),
                     "};"
                 ]);
