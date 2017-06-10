@@ -1,11 +1,6 @@
 webpackJsonp([5],{
 
 /***/ 11:
-/* no static exports found */
-/* all exports used */
-/*!**************************************************************************!*\
-  !*** /Users/lxjwlt/GitHub/divide-webpack-plugin/~/jquery/dist/jquery.js ***!
-  \**************************************************************************/
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!

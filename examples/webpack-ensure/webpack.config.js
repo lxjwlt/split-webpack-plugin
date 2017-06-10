@@ -7,8 +7,7 @@ module.exports = {
         login: './login.js'
     },
     output: {
-        filename: '[name].js',
-        pathinfo: true
+        filename: '[name].js'
     },
     plugins: [
         new DividePlugin({
