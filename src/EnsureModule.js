@@ -3,6 +3,7 @@
 const Module = require("webpack/lib/Module");
 const RawSource = require("webpack-sources").RawSource;
 const Dependency = require('webpack/lib/Dependency');
+let nextId = 0;
 
 class EnsureModule extends Module {
 
@@ -10,7 +11,7 @@ class EnsureModule extends Module {
 		super();
 		this._oldEntryModule = options.oldEntryModule;
 		this.context = options.context;
-		this.name = options.name || String(Math.random()).replace(/\D/g, '');
+		this.name = options.name || `ensure-module-${nextId++}`;
 		this._chunk = options.chunk;
 		this.ensureChunks = options.chunks;
 		this.built = false;
