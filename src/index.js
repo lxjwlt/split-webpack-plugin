@@ -6,7 +6,7 @@ const EnsureModule = require('./EnsureModule');
 const ConcatSource = require("webpack-sources").ConcatSource;
 
 let nextId = 0;
-let initEvent = false;
+let compilationSet = new Set();
 
 class DividePlugin {
 
@@ -126,11 +126,11 @@ class DividePlugin {
 
 	initEvent (compilation) {
 
-	    if (initEvent) {
+	    if (compilationSet.has(compilation)) {
 	        return;
         }
 
-        initEvent = true;
+        compilationSet.add(compilation);
 
         compilation.mainTemplate.plugin('bootstrap', function (source, chunk) {
 
