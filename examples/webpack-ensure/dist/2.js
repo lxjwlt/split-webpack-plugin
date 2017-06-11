@@ -1,6 +1,6 @@
 __webpackWaitResolve([2]);webpackJsonp([2],{
 
-/***/ 6:
+/***/ 7:
 /***/ (function(module, exports, __webpack_require__) {
 
 var all = [];
@@ -12,4 +12,4 @@ Promise.all(all).then(function () {
 
 /***/ })
 
-},[6]);
+},[7]);
