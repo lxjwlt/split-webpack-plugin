@@ -172,7 +172,7 @@ class DividePlugin {
 
             source.add(`__webpackWaitResolve(${JSON.stringify(chunk.ids)});`);
 
-            source.add('');
+            source.add('\n');
 
             source.add(oldSource);
 
