@@ -292,6 +292,8 @@ class DividePlugin {
         for (let [index, group] of moduleGroups.entries()) {
             let bundledModuleChunk = this.bundleModules(group, chunk, index, compilation);
 
+            bundledModuleChunk.chunks = [...chunk.chunks];
+
             bundledModuleChunk.parents = [ensureChunk];
 
             ensureChunk.addChunk(bundledModuleChunk);
