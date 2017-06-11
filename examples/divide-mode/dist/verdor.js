@@ -169,7 +169,7 @@
 /******/ 			if(__waitResolveChunks[chunkId]) {
 /******/ 				resolves.push(__waitResolveChunks[chunkId][0]);
 /******/ 			}
-/******/ 			installedChunks[chunkId] = undefined;
+/******/ 			installedChunks[chunkId] = 0;
 /******/ 			__waitResolveChunks[chunkId] = undefined;
 /******/ 		}
 /******/ 		while(resolves.length) {

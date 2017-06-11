@@ -29,6 +29,19 @@
 /******/ 		return result;
 /******/ 	};
 /******/
+/******/ 	var __parentWaitResolve = window.__webpackWaitResolve;
+/******/ 	var __waitResolveChunks = {};
+/******/ 	window.__webpackWaitResolve = function (chunkIds) {
+/******/ 		for(var i = 0;i < chunkIds.length; i++) {
+/******/ 			var chunkId = chunkIds[i];
+/******/ 			if(installedChunks[chunkId]) {
+/******/ 				__waitResolveChunks[chunkId] = installedChunks[chunkId];
+/******/ 				installedChunks[chunkId] = 0;
+/******/ 			}
+/******/ 		}
+/******/ 		if(__parentWaitResolve) __parentWaitResolve(chunkIds);
+/******/ 	};
+/******/
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -149,6 +162,21 @@
 /******/ 	// on error function for async loading
 /******/ 	__webpack_require__.oe = function(err) { console.error(err); throw err; };
 /******/
+/******/ 	__webpack_require__._resolve = function (chunkIds) {
+/******/ 		var chunkId, i = 0, resolves = [];
+/******/ 		for(;i < chunkIds.length; i++) {
+/******/ 			chunkId = chunkIds[i];
+/******/ 			if(__waitResolveChunks[chunkId]) {
+/******/ 				resolves.push(__waitResolveChunks[chunkId][0]);
+/******/ 			}
+/******/ 			installedChunks[chunkId] = 0;
+/******/ 			__waitResolveChunks[chunkId] = undefined;
+/******/ 		}
+/******/ 		while(resolves.length) {
+/******/ 			resolves.shift()();
+/******/ 		}
+/******/ 	};
+/******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
@@ -159,14 +187,14 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 
-__webpack_require__.e/* require.ensure */(1).then((function () {
+__webpack_require__.e/* require.ensure */(0).then((function () {
     const asyncMod = __webpack_require__(0);
     const asyncMod2 = __webpack_require__(3);
-console.log('[index-mod] start');
-}).bind(null, __webpack_require__)).catch(__webpack_require__.oe);
 
-__webpack_require__.e/* require.ensure */(2).then((function () {
-    __webpack_require__(4);
+    __webpack_require__.e/* require.ensure */(2).then((function () {
+        __webpack_require__(4);
+        console.log('[index-mod] start');
+    }).bind(null, __webpack_require__)).catch(__webpack_require__.oe);
 }).bind(null, __webpack_require__)).catch(__webpack_require__.oe);
 
 
