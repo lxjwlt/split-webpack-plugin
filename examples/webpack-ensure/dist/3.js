@@ -1,22 +1,14 @@
 webpackJsonp([3],{
 
-/***/ 4:
+/***/ 11:
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(9);
-__webpack_require__(10);
+__webpack_require__.e/* require.ensure */(0).then((function () {
+    __webpack_require__(10);
+    const asyncMod = __webpack_require__(0);
 
-exports.name = 'common mod';
-console.log('[common-mod] start');
-
-
-/***/ }),
-
-/***/ 9:
-/***/ (function(module, exports) {
-
-exports.name = 'other mod'
-console.log('[other-mod] start');
+    console.log('[ensure-mod] start')
+}).bind(null, __webpack_require__)).catch(__webpack_require__.oe);
 
 
 /***/ })

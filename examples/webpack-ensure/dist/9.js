@@ -1,10 +1,12 @@
-webpackJsonp([9],[
-/* 0 */
+webpackJsonp([9],{
+
+/***/ 13:
 /***/ (function(module, exports) {
 
-exports.name = 'async mod'
-console.log('[async-mod] start');
+exports.name = 'xlass'
+console.log('[xlass-mod] start');
 
 
 /***/ })
-]);
+
+});

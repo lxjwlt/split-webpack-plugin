@@ -77,6 +77,10 @@
 /******/ 	// This file contains only the entry chunk.
 /******/ 	// The chunk loading function for additional chunks
 /******/ 	__webpack_require__.e = function requireEnsure(chunkId) {
+/******/ 		if(__waitResolveChunks[chunkId]) {
+/******/ 			return __waitResolveChunks[chunkId][2];
+/******/ 		}
+/******/
 /******/ 		var installedChunkData = installedChunks[chunkId];
 /******/ 		if(installedChunkData === 0) {
 /******/ 			return new Promise(function(resolve) { resolve(); });

@@ -47,7 +47,7 @@
 /******/
 /******/ 	// objects to store loaded and loading chunks
 /******/ 	var installedChunks = {
-/******/ 		10: 0
+/******/ 		15: 0
 /******/ 	};
 /******/
 /******/ 	// The require function
@@ -77,6 +77,10 @@
 /******/ 	// This file contains only the entry chunk.
 /******/ 	// The chunk loading function for additional chunks
 /******/ 	__webpack_require__.e = function requireEnsure(chunkId) {
+/******/ 		if(__waitResolveChunks[chunkId]) {
+/******/ 			return __waitResolveChunks[chunkId][2];
+/******/ 		}
+/******/
 /******/ 		var installedChunkData = installedChunks[chunkId];
 /******/ 		if(installedChunkData === 0) {
 /******/ 			return new Promise(function(resolve) { resolve(); });
@@ -189,10 +193,10 @@
 
 __webpack_require__.e/* require.ensure */(1).then((function () {
     const asyncMod = __webpack_require__(0);
-    const asyncMod2 = __webpack_require__(3);
+    const asyncMod2 = __webpack_require__(2);
 
-    __webpack_require__.e/* require.ensure */(2).then((function () {
-        __webpack_require__(4);
+    __webpack_require__.e/* require.ensure */(4).then((function () {
+        __webpack_require__(3);
         console.log('[index-mod] start');
     }).bind(null, __webpack_require__)).catch(__webpack_require__.oe);
 }).bind(null, __webpack_require__)).catch(__webpack_require__.oe);

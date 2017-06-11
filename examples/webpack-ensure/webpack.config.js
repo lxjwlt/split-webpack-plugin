@@ -19,7 +19,7 @@ module.exports = {
         }),
         new DividePlugin({
             chunk: ['login'],
-            size: 100
+            divide: 100
         }),
         new HtmlPlguin(),
         new HtmlPlguin({
