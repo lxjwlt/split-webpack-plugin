@@ -3,7 +3,7 @@
 'use strict';
 
 const EnsureModule = require('./EnsureModule');
-const ConcatSource = require("webpack-sources").ConcatSource;
+const ConcatSource = require('webpack-sources').ConcatSource;
 
 let nextId = 0;
 let compilationSet = new Set();
@@ -155,7 +155,7 @@ class DividePlugin {
                         '}',
                         'if(__parentWaitResolve) __parentWaitResolve(chunkIds);'
                     ]),
-                    "};"
+                    '};'
                 ]);
             }
 
@@ -205,6 +205,18 @@ class DividePlugin {
                     '}'
                 ]),
                 '};'
+            ]);
+        });
+
+        compilation.mainTemplate.plugin('require-ensure', function (source) {
+            return this.asString([
+                'if(__waitResolveChunks[chunkId]) {',
+                this.indent([
+                    'return __waitResolveChunks[chunkId][2];'
+                ]),
+                '}',
+                '',
+                source
             ]);
         });
 
