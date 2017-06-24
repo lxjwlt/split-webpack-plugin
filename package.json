@@ -8,7 +8,7 @@
     "test": "npm run lint && mocha --recursive --reporter dot test/*.spec.js || exit 0",
     "debug-build": "node --inspect --debug-brk examples/build.js",
     "debug": "node --inspect --debug-brk ./node_modules/mocha/bin/_mocha",
-    "lint": "eslint '**/*.js'"
+    "lint": "eslint --fix '**/*.js'"
   },
   "keywords": [
     "webpack",

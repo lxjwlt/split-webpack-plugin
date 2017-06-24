@@ -15,9 +15,6 @@ class DividePlugin {
     initOptions (options) {
         options = Object.assign({
             async: true,
-            divideMode (count, divide) {
-                return Math.floor(count / divide);
-            },
             excludeChunks: []
         }, options);
 
@@ -313,15 +310,16 @@ class DividePlugin {
         }
 
         if (option.divide > 1) {
-            let num = option.divideMode(modules.length, option.divide);
+            let divide = Math.min(modules.length, option.divide);
+            let num = Math.floor(modules.length / divide);
+            let remainder = divide - modules.length % divide;
 
-            num = Math.max(num, 1);
-
-            if (num < modules.length) {
-                for (let i = 0; i < modules.length; i += num) {
-                    groups.push(modules.slice(i, i + num));
-                }
-            }
+            Array.from(Array(divide))
+                .map((value, i) => i < remainder ? num : num + 1)
+                .reduce((start, count) => {
+                    groups.push(modules.slice(start, start + count));
+                    return start + count;
+                }, 0);
 
             return groups;
         }

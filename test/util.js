@@ -63,7 +63,7 @@ exports.createTest = function (files) {
 
                     browser.assert.elements(
                         'script', config.chunks,
-                        `expect ${config.expectedEntry} chunks`
+                        `expect ${config.chunks} chunks`
                     );
 
                     done();

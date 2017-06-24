@@ -1,4 +1,3 @@
-const assert = require('chai').assert;
 const DividePlugin = require('../');
 const {createTest, removeTempDir} = require('./util');
 const test = createTest({
@@ -52,17 +51,17 @@ describe('DivideWebpackPlugin', function () {
             }, done);
         });
 
-        it('divide each module', function (done) {
+        it('divide module', function (done) {
             test({
                 entry: ['app'],
                 plugins: [
                     new DividePlugin({
-                        divide: 6
+                        divide: 3
                     })
                 ]
             }, {
                 expectedEntry: 1,
-                chunks: 6
+                chunks: 4
             }, done);
         });
 
@@ -90,7 +89,7 @@ describe('DivideWebpackPlugin', function () {
                 ]
             }, {
                 expectedEntry: 2,
-                chunks: 7
+                chunks: 6
             }, done);
         });
 
@@ -105,59 +104,6 @@ describe('DivideWebpackPlugin', function () {
             }, {
                 expectedEntry: 2,
                 chunks: 2
-            }, done);
-        });
-
-        it('divide mode to deal with float part', function (done) {
-            test({
-                entry: ['app'],
-                plugins: [
-                    new DividePlugin({
-                        divide: 4,
-                        divideMode (count, divide) {
-                            assert.strictEqual(count, 5);
-                            assert.strictEqual(divide, 4);
-                            return 3;
-                        }
-                    })
-                ]
-            }, {
-                expectedEntry: 1,
-                chunks: 3
-            }, done);
-        });
-
-        it('invalid number return from divide mode', function (done) {
-            test({
-                entry: ['app'],
-                plugins: [
-                    new DividePlugin({
-                        divide: 4,
-                        divideMode () {
-                            return 0;
-                        }
-                    })
-                ]
-            }, {
-                expectedEntry: 1,
-                chunks: 6
-            }, done);
-        });
-
-        it('big number return from divide mode', function (done) {
-            test({
-                entry: ['app'],
-                plugins: [
-                    new DividePlugin({
-                        divide: 2,
-                        divideMode () {
-                            return 100;
-                        }
-                    })
-                ]
-            }, {
-                expectedEntry: 1,
-                chunks: 1
             }, done);
         });
 
@@ -191,7 +137,7 @@ describe('DivideWebpackPlugin', function () {
             }, done);
         });
 
-        it('empty exclude chunks', function (done) {
+        it('exclude chunks', function (done) {
             test({
                 entry: ['app', 'util'],
                 plugins: [
@@ -290,7 +236,7 @@ describe('DivideWebpackPlugin', function () {
                 ]
             }, {
                 expectedEntry: 1,
-                chunks: 4
+                chunks: 3
             }, done);
         });
     });
@@ -307,6 +253,21 @@ describe('DivideWebpackPlugin', function () {
             }, {
                 expectedEntry: 1,
                 chunks: 1
+            }, done);
+        });
+
+        it('divide module', function (done) {
+            test({
+                entry: ['app'],
+                plugins: [
+                    new DividePlugin({
+                        divide: 2,
+                        async: false
+                    })
+                ]
+            }, {
+                expectedEntry: 2,
+                chunks: 2
             }, done);
         });
 
@@ -370,7 +331,7 @@ describe('DivideWebpackPlugin', function () {
                 ]
             }, {
                 expectedEntry: 2,
-                chunks: 7
+                chunks: 6
             }, done);
         });
 
@@ -389,8 +350,8 @@ describe('DivideWebpackPlugin', function () {
                     })
                 ]
             }, {
-                expectedEntry: 4,
-                chunks: 6
+                expectedEntry: 3,
+                chunks: 5
             }, done);
         });
     });
