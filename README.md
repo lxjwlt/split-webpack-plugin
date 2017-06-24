@@ -57,33 +57,6 @@ var webpackConfig = {
 
 - `chunks`: add some chunks in division process
 - `excludeChunks`: skip these chunks from division process
-- `divideMode`: the way to divide modules, default value is as follow:
-
-    ```javascript
-    {
-        divide: 3,
-        divideMode (modulesLength, divide) {
-            // divide === 3
-
-            return Math.floor(moduleLength / divide);
-        }
-    }
-    ```
-
-    If there are 4 modules in total, `divideMode` will return 1, that means creating 4 files, each containing only 1 module.
-
-    we can use `Math.ceil` to allow each file to contain as many modules as possible:
-
-    ```javascript
-    {
-        divide: 3,
-        divideMode (modulesLength, divide) {
-            return Math.ceil(moduleLength / divide);
-        }
-    }
-    ```
-
-    check example: [divide-mode](./examples/divide-mode).
 
 [npm-url]: https://www.npmjs.com/package/divide-webpack-plugin
 [npm-image]: https://img.shields.io/npm/v/divide-webpack-plugin.svg
