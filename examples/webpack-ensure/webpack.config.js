@@ -11,12 +11,12 @@ module.exports = {
     },
     plugins: [
         new DividePlugin({
-            chunk: ['app'],
+            chunks: ['app'],
             divide: 2
         }),
         new DividePlugin({
-            chunk: ['login'],
-            divide: 100
+            chunks: ['login'],
+            size: 100
         }),
         new HtmlPlguin(),
         new HtmlPlguin({

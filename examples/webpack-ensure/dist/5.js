@@ -1,16 +1,22 @@
-__webpackWaitResolve([5]);
-webpackJsonp([5],{
+webpackJsonp([5,9],{
 
-/***/ 9:
+/***/ 0:
+/***/ (function(module, exports) {
+
+exports.name = 'async mod'
+console.log('[async-mod] start');
+
+
+/***/ }),
+
+/***/ 6:
 /***/ (function(module, exports, __webpack_require__) {
 
-var all = [];
-all.push(__webpack_require__.e(13).catch(__webpack_require__.oe));
-all.push(__webpack_require__.e(14).catch(__webpack_require__.oe));
-Promise.all(all).then(function () {
-    __webpack_require__._resolve([5])
-}).catch(__webpack_require__.oe)
+window.jquery = __webpack_require__(12);
+
+console.log('[3parts-mod] start');
+
 
 /***/ })
 
-},[9]);
+});

@@ -1,14 +1,19 @@
 webpackJsonp([3],{
 
+/***/ 10:
+/***/ (function(module, exports) {
+
+exports.name = 'other mod'
+console.log('[other-mod] start');
+
+
+/***/ }),
+
 /***/ 11:
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-__webpack_require__.e/* require.ensure */(0).then((function () {
-    __webpack_require__(10);
-    const asyncMod = __webpack_require__(0);
-
-    console.log('[ensure-mod] start')
-}).bind(null, __webpack_require__)).catch(__webpack_require__.oe);
+exports.name = 'xlass'
+console.log('[xlass-mod] start');
 
 
 /***/ })

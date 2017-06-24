@@ -47,7 +47,7 @@
 /******/
 /******/ 	// objects to store loaded and loading chunks
 /******/ 	var installedChunks = {
-/******/ 		7: 0
+/******/ 		4: 0
 /******/ 	};
 /******/
 /******/ 	// The require function
@@ -182,20 +182,32 @@
 /******/ 	};
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 4:
+/***/ 1:
 /***/ (function(module, exports, __webpack_require__) {
 
-var all = [];
-all.push(__webpack_require__.e(2).catch(__webpack_require__.oe));
-all.push(__webpack_require__.e(3).catch(__webpack_require__.oe));
-Promise.all(all).then(function () {
-    __webpack_require__(15)
-}).catch(__webpack_require__.oe)
+__webpack_require__.e/* require.ensure */(0).then((function () {
+    __webpack_require__(6);
+    const asyncMod = __webpack_require__(0);
+
+    console.log('[ensure-mod] start')
+}).bind(null, __webpack_require__)).catch(__webpack_require__.oe);
+
+
+/***/ }),
+
+/***/ 5:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+__webpack_require__(1);
+
+console.log('[login-mod] start');
+
 
 /***/ })
 

@@ -41,7 +41,6 @@ class DividePlugin {
 
                 compilation[this.ident] = true;
 
-                debugger;
                 this.initEvent(compilation);
 
                 for (let chunk of [...chunks]) {

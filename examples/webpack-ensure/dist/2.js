@@ -1,14 +1,16 @@
+__webpackWaitResolve([2]);
 webpackJsonp([2],{
 
-/***/ 15:
+/***/ 8:
 /***/ (function(module, exports, __webpack_require__) {
 
-
-__webpack_require__(11);
-
-console.log('[login-mod] start');
-
+var all = [];
+all.push(__webpack_require__.e(3).catch(__webpack_require__.oe));
+all.push(__webpack_require__.e(7).catch(__webpack_require__.oe));
+Promise.all(all).then(function () {
+    __webpack_require__._resolve([2])
+}).catch(__webpack_require__.oe)
 
 /***/ })
 
-});
+},[8]);

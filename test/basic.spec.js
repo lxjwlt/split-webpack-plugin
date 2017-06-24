@@ -395,6 +395,5 @@ describe('DivideWebpackPlugin', function () {
                 chunks: 6
             }, done);
         });
-
     });
 });
