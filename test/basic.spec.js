@@ -28,6 +28,11 @@ const test = createTest({
     s250: {
         path: './lib',
         size: 250
+    },
+    ensure: {
+        path: './',
+        dependencies: ['util', 'others', 'xlass'],
+        ensure: true
     }
 });
 
@@ -354,5 +359,42 @@ describe('DivideWebpackPlugin', function () {
                 chunks: 5
             }, done);
         });
+
+        it('same ensure chunk', function (done) {
+            test({
+                entry: ['ensure'],
+                plugins: [
+                    new DividePlugin({
+                        divide: 2
+                    }),
+                    new DividePlugin({
+                        divide: 100
+                    })
+                ]
+            }, {
+                expectedEntry: 1,
+                chunks: 4
+            }, done);
+        });
+
+        it('different chunk with ensure chunk', function (done) {
+            test({
+                entry: ['ensure', 'app'],
+                plugins: [
+                    new DividePlugin({
+                        chunks: ['app'],
+                        divide: 3
+                    }),
+                    new DividePlugin({
+                        chunks: ['ensure'],
+                        divide: 1
+                    })
+                ]
+            }, {
+                expectedEntry: 2,
+                chunks: 6
+            }, done);
+        });
+
     });
 });

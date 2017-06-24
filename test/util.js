@@ -106,6 +106,8 @@ function createFiles (files) {
 
         data.push(
 
+            file.ensure ? 'require.ensure([], function () {' : '',
+
             `(window.mods = window.mods || {})["${name}"] = {`,
 
             `   dependencies: [`,
@@ -115,6 +117,8 @@ function createFiles (files) {
             `   ]`,
 
             `};`,
+
+            file.ensure ? '});' : '',
 
             `module.exports = "${name}";`,
 

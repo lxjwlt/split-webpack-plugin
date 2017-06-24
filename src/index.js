@@ -4,7 +4,7 @@ const EnsureModule = require('./EnsureModule');
 const ConcatSource = require('webpack-sources').ConcatSource;
 
 let nextId = 0;
-let compilationSet = new Set();
+let compilationMap = new Map();
 
 class DividePlugin {
     constructor (options) {
@@ -41,12 +41,15 @@ class DividePlugin {
 
                 compilation[this.ident] = true;
 
+                debugger;
                 this.initEvent(compilation);
 
                 for (let chunk of [...chunks]) {
-                    if (!this.isValidChunk(chunk)) {
+                    if (!this.isValidChunk(chunk, compilation)) {
                         continue;
                     }
+
+                    compilationMap.get(compilation).add(chunk);
 
                     let bundleMethod = this.options.async ? 'doAsync' : 'doSync';
 
@@ -107,16 +110,17 @@ class DividePlugin {
 
             compilation.plugin('done', () => {
                 this.entryChunkMap = null;
+                compilationMap.delete(compilation);
             });
         });
     }
 
     initEvent (compilation) {
-        if (compilationSet.has(compilation)) {
+        if (compilationMap.has(compilation)) {
             return;
         }
 
-        compilationSet.add(compilation);
+        compilationMap.set(compilation, new Set());
 
         compilation.mainTemplate.plugin('bootstrap', function (source, chunk) {
             if (chunk.chunks.length > 0) {
@@ -205,9 +209,19 @@ class DividePlugin {
         });
     }
 
-    isValidChunk (chunk) {
-        // only entry or async chunk
-        if (!chunk.hasRuntime() && !this.isAsyncChunk(chunk)) {
+    isValidChunk (chunk, compilation, reuse) {
+        if (!reuse && compilationMap.get(compilation).has(chunk)) {
+            return false;
+        }
+
+        if (this.isAsyncChunk(chunk)) {
+            let entryChunk = this.getEntryChunk(chunk);
+            return entryChunk
+                ? this.isValidChunk(entryChunk, compilation, true) : false;
+        }
+
+        // only entry chunk
+        if (!chunk.hasRuntime()) {
             return false;
         }
 
@@ -220,6 +234,16 @@ class DividePlugin {
         }
 
         return true;
+    }
+
+    getEntryChunk (chunk) {
+        while (chunk) {
+            if (chunk.hasRuntime()) {
+                return chunk;
+            }
+
+            chunk = chunk.parents[0];
+        }
     }
 
     isAsyncChunk (chunk) {
@@ -278,7 +302,7 @@ class DividePlugin {
 
         this.removeChunk(chunk, compilation);
 
-        let ensureChunk = compilation.addChunk(chunk.name);
+        let ensureChunk = this.createChunk(compilation, chunk.name);
 
         for (let [index, group] of moduleGroups.entries()) {
             let bundledModuleChunk = this.bundleModules(group, chunk, index, compilation);
@@ -343,13 +367,21 @@ class DividePlugin {
         return groups.map(group => group.list);
     }
 
+    createChunk (compilation, name) {
+        let newChunk = compilation.addChunk(name);
+        compilationMap.get(compilation).add(newChunk);
+        return newChunk;
+    }
+
     bundleModules (modules, oldChunk, index, compilation) {
         let chunkName = oldChunk.name ? `divide-chunk_${oldChunk.name}${index}` : '';
-        let newChunk = compilation.addChunk(chunkName);
+        let newChunk = this.createChunk(compilation, chunkName);
 
         for (let module of modules) {
             oldChunk.moveModule(module, newChunk);
         }
+
+        compilationMap.get(compilation).add(newChunk);
 
         return newChunk;
     }

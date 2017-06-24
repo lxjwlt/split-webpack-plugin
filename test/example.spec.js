@@ -15,10 +15,6 @@ describe('DivideWebpackPlugin Examples', function () {
         runExample('async', done);
     });
 
-    it('divide-mode example', function (done) {
-        runExample('divide-mode', done);
-    });
-
     it('sync example', function (done) {
         runExample('sync', done);
     });
