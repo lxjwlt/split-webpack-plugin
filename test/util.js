@@ -1,21 +1,18 @@
 const path = require('path');
 const webpack = require('webpack');
-const rimraf = require('rimraf');
 const assert = require('chai').assert;
 const fs = require('fs-extra');
-const EnsureModule = require('../src/EnsureModule');
 const HtmlPlguin = require('html-webpack-plugin');
 const Browser = require('zombie');
 
 const TEMP_DIR = path.resolve(__dirname, './temp');
 const OUTPUT_DIR = path.resolve(TEMP_DIR, 'dist');
 
-exports.removeTempDir = function (callback) {debugger;
+exports.removeTempDir = function (callback) {
     fs.remove(TEMP_DIR, callback);
 };
 
 exports.createTest = function (files) {
-
     Object.keys(files).forEach((name) => {
         let file = files[name];
         file.path = path.resolve(TEMP_DIR, file.path, `${name}.js`);
@@ -23,9 +20,7 @@ exports.createTest = function (files) {
     });
 
     return function (webpackConfig, config, done) {
-
         createResource(files).then(() => {
-
             webpackConfig.plugins.unshift(new HtmlPlguin());
 
             let entry = webpackConfig.entry;
@@ -40,7 +35,7 @@ exports.createTest = function (files) {
                 filename: '[name].js'
             }, webpackConfig.output);
 
-            webpack(webpackConfig, function (err, stats) {debugger;
+            webpack(webpackConfig, function (err, stats) {
                 assert.ifError(err);
                 assert.isFalse(stats.hasErrors());
                 assert.isFalse(stats.hasWarnings());
@@ -48,7 +43,7 @@ exports.createTest = function (files) {
                 let browser = new Browser();
                 let pagePath = path.resolve(TEMP_DIR, './dist/index.html');
 
-                browser.visit(`file://${pagePath}`, function() {
+                browser.visit(`file://${pagePath}`, function () {
                     browser.assert.success('script no error');
 
                     assert.deepEqual(
@@ -74,7 +69,6 @@ exports.createTest = function (files) {
                     done();
                 });
             });
-
         });
     };
 };

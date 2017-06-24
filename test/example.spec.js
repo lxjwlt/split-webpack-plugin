@@ -9,7 +9,6 @@ const assert = require('chai').assert;
 const OUTPUT_DIR = path.join(__dirname, '../dist');
 
 describe('DivideWebpackPlugin Examples', function () {
-
     this.timeout(0);
 
     it('async example', function (done) {
@@ -27,9 +26,7 @@ describe('DivideWebpackPlugin Examples', function () {
     it('webpack-ensure example', function (done) {
         runExample('webpack-ensure', done);
     });
-
 });
-
 
 function runExample (exampleName, done) {
     const examplePath = path.resolve(__dirname, '..', 'examples', exampleName);
@@ -43,7 +40,6 @@ function runExample (exampleName, done) {
         options.output.path = exampleOutput;
 
         webpack(options, function (err, stats) {
-
             const res = dircompare.compareSync(fixturePath, exampleOutput, {
                 compareSize: true
             });

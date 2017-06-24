@@ -33,7 +33,6 @@ const test = createTest({
 });
 
 describe('DivideWebpackPlugin', function () {
-
     this.timeout(0);
 
     beforeEach(function (done) {
@@ -41,7 +40,6 @@ describe('DivideWebpackPlugin', function () {
     });
 
     describe('async', function () {
-
         it('default', function (done) {
             test({
                 entry: ['app'],
@@ -54,7 +52,7 @@ describe('DivideWebpackPlugin', function () {
             }, done);
         });
 
-        it('divide each module', function (done) {debugger;
+        it('divide each module', function (done) {
             test({
                 entry: ['app'],
                 plugins: [
@@ -109,7 +107,6 @@ describe('DivideWebpackPlugin', function () {
                 chunks: 2
             }, done);
         });
-
 
         it('divide mode to deal with float part', function (done) {
             test({
@@ -178,7 +175,6 @@ describe('DivideWebpackPlugin', function () {
                 chunks: 1
             }, done);
         });
-
 
         it('empty chunks', function (done) {
             test({
@@ -300,7 +296,6 @@ describe('DivideWebpackPlugin', function () {
     });
 
     describe('sync', function () {
-
         it('default', function (done) {
             test({
                 entry: ['app'],
@@ -312,7 +307,7 @@ describe('DivideWebpackPlugin', function () {
             }, {
                 expectedEntry: 1,
                 chunks: 1
-            }, done)
+            }, done);
         });
 
         it('divide each module', function (done) {
@@ -344,11 +339,9 @@ describe('DivideWebpackPlugin', function () {
                 chunks: 2
             }, done);
         });
-
     });
 
     describe('multiple apply', function () {
-
         it('default', function (done) {
             test({
                 entry: ['app'],
@@ -400,7 +393,5 @@ describe('DivideWebpackPlugin', function () {
                 chunks: 6
             }, done);
         });
-
     });
-
 });
