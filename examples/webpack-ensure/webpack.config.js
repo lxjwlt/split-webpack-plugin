@@ -12,10 +12,7 @@ module.exports = {
     plugins: [
         new DividePlugin({
             chunk: ['app'],
-            divide: 2,
-            divideMode (count, divide) {
-                return Math.ceil(count / divide);
-            }
+            divide: 2
         }),
         new DividePlugin({
             chunk: ['login'],

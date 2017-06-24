@@ -12,10 +12,7 @@ module.exports = {
     plugins: [
         new DividePlugin({
             async: false,
-            divide: 3,
-            divideMode (count, divide) {
-                return Math.ceil(count / divide);
-            }
+            divide: 3
         }),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'verdor'

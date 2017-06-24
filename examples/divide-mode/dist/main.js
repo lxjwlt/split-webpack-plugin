@@ -1,20 +1,6 @@
-webpackJsonp([1],[
-/* 0 */,
-/* 1 */
-/* no static exports found */
-/* all exports used */
-/*!***********************!*\
-  !*** ./lib/common.js ***!
-  \***********************/
-/***/ (function(module, exports, __webpack_require__) {
+webpackJsonp([2],{
 
-__webpack_require__(/*! ./xlass */ 0);
-__webpack_require__(/*! ./other */ 3);
-exports.name = 'common mod';
-
-
-/***/ }),
-/* 2 */
+/***/ 2:
 /* no static exports found */
 /* all exports used */
 /*!****************!*\
@@ -29,4 +15,5 @@ console.log('[cmd]', common.name);
 
 
 /***/ })
-],[2]);
+
+},[2]);

@@ -1,27 +1,16 @@
-webpackJsonp([0],[
-/* 0 */
+webpackJsonp([1],[
+/* 0 */,
+/* 1 */
 /* no static exports found */
 /* all exports used */
-/*!**********************!*\
-  !*** ./lib/xlass.js ***!
-  \**********************/
-/***/ (function(module, exports) {
+/*!***********************!*\
+  !*** ./lib/common.js ***!
+  \***********************/
+/***/ (function(module, exports, __webpack_require__) {
 
-exports.name = 'xlass'
-
-
-/***/ }),
-/* 1 */,
-/* 2 */,
-/* 3 */
-/* no static exports found */
-/* all exports used */
-/*!**********************!*\
-  !*** ./lib/other.js ***!
-  \**********************/
-/***/ (function(module, exports) {
-
-exports.name = 'other mod'
+__webpack_require__(/*! ./xlass */ 0);
+__webpack_require__(/*! ./other */ 3);
+exports.name = 'common mod';
 
 
 /***/ })
