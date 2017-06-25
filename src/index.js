@@ -222,7 +222,7 @@ class DividePlugin {
         }
 
         // only entry chunk
-        if (!chunk.hasRuntime()) {
+        if (!this.isEntryChunk(chunk)) {
             return false;
         }
 
@@ -239,7 +239,7 @@ class DividePlugin {
 
     getEntryChunk (chunk) {
         while (chunk) {
-            if (chunk.hasRuntime()) {
+            if (this.isEntryChunk(chunk)) {
                 return chunk;
             }
 
@@ -248,7 +248,7 @@ class DividePlugin {
     }
 
     isAsyncChunk (chunk) {
-        return !chunk.hasRuntime() && !chunk.name;
+        return !this.isEntryChunk(chunk) && !chunk.name;
     }
 
     doSync (compiler, compilation, chunk, moduleGroups) {
@@ -413,7 +413,7 @@ class DividePlugin {
         let newChunk = this.createChunk(compilation, chunkName);
 
         for (let module of modules) {
-            oldChunk.moveModule(module, newChunk);
+            this.moveModule(oldChunk, module, newChunk);
         }
 
         compilationMap.get(compilation).add(newChunk);
@@ -421,9 +421,31 @@ class DividePlugin {
         return newChunk;
     }
 
+    moveModule (oldChunk, module, newChunk) {
+        if (oldChunk.moveModule) {
+            oldChunk.moveModule(module, newChunk);
+            return;
+        }
+
+        module.removeChunk(oldChunk);
+        module.addChunk(newChunk);
+        newChunk.addModule(module);
+        module.rewriteChunkInReasons(this, [newChunk]);
+    }
+
     replaceChunk (newChunk, oldChunk) {
-        for (let entrypoint of oldChunk.entrypoints) {
-            entrypoint.insertChunk(newChunk, oldChunk);
+        if (oldChunk.entry) {
+            newChunk.entry = true;
+        }
+
+        if (oldChunk.initial) {
+            newChunk.initial = true;
+        }
+
+        if (oldChunk.entrypoints) {
+            for (let entrypoint of oldChunk.entrypoints) {
+                entrypoint.insertChunk(newChunk, oldChunk);
+            }
         }
     }
 
@@ -455,6 +477,14 @@ class DividePlugin {
 
         // mark as entry
         chunk.entryModule = ensureModule;
+    }
+
+    isEntryChunk (chunk) {
+        if (chunk.hasRuntime) {
+            return chunk.hasRuntime();
+        }
+
+        return chunk.entry;
     }
 }
 
