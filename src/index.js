@@ -56,13 +56,15 @@ class DividePlugin {
                         bundleMethod = 'doAsyncChunk';
                     }
 
-                    let moduleGroups = this.splitModules(chunk.modules);
+                    let modulesMap = this.filterModules(chunk.modules, bundleMethod);
+
+                    let moduleGroups = this.splitModules(modulesMap.includeModules);
 
                     if (moduleGroups.length <= 1) {
                         continue;
                     }
 
-                    this[bundleMethod](compiler, compilation, chunk, moduleGroups);
+                    this[bundleMethod](compiler, compilation, chunk, moduleGroups, modulesMap.excludeModules);
                 }
 
                 return true;
@@ -296,7 +298,7 @@ class DividePlugin {
         );
     }
 
-    doAsync (compiler, compilation, chunk, moduleGroups) {
+    doAsync (compiler, compilation, chunk, moduleGroups, excludeModules) {
         this.entryChunkMap[chunk.name] = chunk;
 
         this.removeChunk(chunk, compilation);
@@ -320,6 +322,11 @@ class DividePlugin {
             chunk.entryModule,
             compilation
         );
+
+        for (let module of excludeModules) {
+            ensureChunk.addModule(module);
+            module.addChunk(ensureChunk);
+        }
 
         this.replaceChunk(ensureChunk, chunk);
     }
@@ -364,6 +371,30 @@ class DividePlugin {
         }
 
         return groups.map(group => group.list);
+    }
+
+    filterModules (modules, method) {
+        if (method !== 'doAsync') {
+            return {
+                includeModules: modules,
+                excludeModules: []
+            };
+        }
+
+        return (modules || []).reduce((map, module) => {
+            if (module.resource.includes('node_modules/css-loader') ||
+                module.resource.includes('node_modules/style-loader') ||
+                module.request.includes('node_modules/css-loader') ||
+                module.request.includes('node_modules/style-loader')) {
+                map.excludeModules.push(module);
+            } else {
+                map.includeModules.push(module);
+            }
+            return map;
+        }, {
+            includeModules: [],
+            excludeModules: []
+        });
     }
 
     createChunk (compilation, name) {
