@@ -382,14 +382,19 @@ class DividePlugin {
         }
 
         return (modules || []).reduce((map, module) => {
-            if (module.resource.includes('node_modules/css-loader') ||
-                module.resource.includes('node_modules/style-loader') ||
-                module.request.includes('node_modules/css-loader') ||
-                module.request.includes('node_modules/style-loader')) {
+            let resource = module.resource || '';
+            let request = module.request || '';
+
+            if (resource.includes('node_modules/css-loader') ||
+                resource.includes('node_modules/style-loader') ||
+                request.includes('node_modules/css-loader') ||
+                request.includes('node_modules/style-loader')
+            ) {
                 map.excludeModules.push(module);
             } else {
                 map.includeModules.push(module);
             }
+
             return map;
         }, {
             includeModules: [],
