@@ -58,6 +58,10 @@ var webpackConfig = {
 - `chunks`: add some chunks in division process
 - `excludeChunks`: skip these chunks from division process
 
+## css
+
+When `options.async:true`, divide-plugin would't partition the files that have been processed by `css-loader` or `style-loader`, so the css files can be loaded immediately. but the best way to do is using [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin)。check example: [extract-css](./examples/extract-css).
+
 [npm-url]: https://www.npmjs.com/package/divide-webpack-plugin
 [npm-image]: https://img.shields.io/npm/v/divide-webpack-plugin.svg
 [node-image]: https://img.shields.io/node/v/divide-webpack-plugin.svg
