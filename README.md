@@ -14,7 +14,7 @@ npm install divide-webpack-plugin -D
 
 ## Usage
 
-Add the plugin to webpack config:
+Add the plugin to [webpack plugins configure](https://webpack.js.org/concepts/plugins/):
 
 ```javascript
 var DividePlugin = require('divide-webpack-plugin');
