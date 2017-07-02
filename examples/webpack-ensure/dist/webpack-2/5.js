@@ -1,20 +1,13 @@
-webpackJsonp([5,9],{
+webpackJsonp([5],{
 
-/***/ 0:
-/***/ (function(module, exports) {
-
-exports.name = 'async mod'
-console.log('[async-mod] start');
-
-
-/***/ }),
-
-/***/ 6:
+/***/ 4:
 /***/ (function(module, exports, __webpack_require__) {
 
-window.jquery = __webpack_require__(12);
+__webpack_require__(8);
+__webpack_require__(9);
 
-console.log('[3parts-mod] start');
+exports.name = 'common mod';
+console.log('[common-mod] start');
 
 
 /***/ })

@@ -11,7 +11,7 @@ webpackJsonp([1],[
 	   __webpack_require__.e(5, resolve)
 	}));
 	all.push(new Promise(function (resolve) {
-	   __webpack_require__.e(6, resolve)
+	   __webpack_require__.e(4, resolve)
 	}));
 	Promise.all(all).then(function () {
 	    __webpack_require__._resolve([1])

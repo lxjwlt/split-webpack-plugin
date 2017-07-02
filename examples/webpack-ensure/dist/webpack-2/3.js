@@ -1,6 +1,6 @@
 webpackJsonp([3],{
 
-/***/ 10:
+/***/ 8:
 /***/ (function(module, exports) {
 
 exports.name = 'other mod'
@@ -9,7 +9,7 @@ console.log('[other-mod] start');
 
 /***/ }),
 
-/***/ 11:
+/***/ 9:
 /***/ (function(module, exports) {
 
 exports.name = 'xlass'

@@ -47,7 +47,7 @@
 /******/
 /******/ 	// objects to store loaded and loading chunks
 /******/ 	var installedChunks = {
-/******/ 		5: 0
+/******/ 		3: 0
 /******/ 	};
 /******/
 /******/ 	// The require function
@@ -182,4 +182,47 @@
 /******/ 	};
 /******/ })
 /************************************************************************/
-/******/ ([]);
+/******/ ([
+/* 0 */
+/* no static exports found */
+/* all exports used */
+/*!***********************!*\
+  !*** ./lib/common.js ***!
+  \***********************/
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ./xlass */ 1);
+__webpack_require__(/*! ./other */ 6);
+exports.name = 'common mod';
+
+
+/***/ }),
+/* 1 */
+/* no static exports found */
+/* all exports used */
+/*!**********************!*\
+  !*** ./lib/xlass.js ***!
+  \**********************/
+/***/ (function(module, exports) {
+
+exports.name = 'xlass'
+
+
+/***/ }),
+/* 2 */,
+/* 3 */,
+/* 4 */,
+/* 5 */,
+/* 6 */
+/* no static exports found */
+/* all exports used */
+/*!**********************!*\
+  !*** ./lib/other.js ***!
+  \**********************/
+/***/ (function(module, exports) {
+
+exports.name = 'other mod'
+
+
+/***/ })
+/******/ ]);

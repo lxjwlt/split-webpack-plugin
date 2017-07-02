@@ -1,10 +1,13 @@
 webpackJsonp([6],{
 
-/***/ 2:
-/***/ (function(module, exports) {
+/***/ 3:
+/***/ (function(module, exports, __webpack_require__) {
 
-	exports.name = 'async2 mod';
-	console.log('[async2-mod] start');
+	__webpack_require__(4);
+	__webpack_require__(5);
+
+	exports.name = 'common mod';
+	console.log('[common-mod] start');
 
 
 /***/ })

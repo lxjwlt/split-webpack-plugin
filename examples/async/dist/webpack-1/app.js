@@ -1,4 +1,4 @@
-webpackJsonp([0,5],[
+webpackJsonp([0],[
 /* 0 */
 /*!******************!*\
   !*** ./index.js ***!
@@ -13,38 +13,6 @@ webpackJsonp([0,5],[
 	    const asyncMod = __webpack_require__(/*! ./lib/async */ 4);
 	    const asyncMod2 = __webpack_require__(/*! ./lib/async2 */ 5);
 	})
-
-
-/***/ }),
-/* 1 */
-/*!***********************!*\
-  !*** ./lib/common.js ***!
-  \***********************/
-/***/ (function(module, exports, __webpack_require__) {
-
-	__webpack_require__(/*! ./xlass */ 2);
-	__webpack_require__(/*! ./other */ 3);
-	exports.name = 'common mod';
-
-
-/***/ }),
-/* 2 */
-/*!**********************!*\
-  !*** ./lib/xlass.js ***!
-  \**********************/
-/***/ (function(module, exports) {
-
-	exports.name = 'xlass'
-
-
-/***/ }),
-/* 3 */
-/*!**********************!*\
-  !*** ./lib/other.js ***!
-  \**********************/
-/***/ (function(module, exports) {
-
-	exports.name = 'other mod'
 
 
 /***/ })

@@ -1,43 +1,6 @@
-webpackJsonp([2],[
-/* 0 */
-/* no static exports found */
-/* all exports used */
-/*!***********************!*\
-  !*** ./lib/common.js ***!
-  \***********************/
-/***/ (function(module, exports, __webpack_require__) {
+webpackJsonp([1],{
 
-__webpack_require__(/*! ./xlass */ 1);
-__webpack_require__(/*! ./other */ 2);
-exports.name = 'common mod';
-
-
-/***/ }),
-/* 1 */
-/* no static exports found */
-/* all exports used */
-/*!**********************!*\
-  !*** ./lib/xlass.js ***!
-  \**********************/
-/***/ (function(module, exports) {
-
-exports.name = 'xlass'
-
-
-/***/ }),
-/* 2 */
-/* no static exports found */
-/* all exports used */
-/*!**********************!*\
-  !*** ./lib/other.js ***!
-  \**********************/
-/***/ (function(module, exports) {
-
-exports.name = 'other mod'
-
-
-/***/ }),
-/* 3 */
+/***/ 3:
 /* no static exports found */
 /* all exports used */
 /*!******************!*\
@@ -56,4 +19,5 @@ __webpack_require__.e/* require.ensure */(0).then((function () {
 
 
 /***/ })
-],[3]);
+
+},[3]);

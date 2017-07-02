@@ -1,13 +1,19 @@
 webpackJsonp([7],{
 
-/***/ 3:
-/***/ (function(module, exports, __webpack_require__) {
+/***/ 4:
+/***/ (function(module, exports) {
 
-	__webpack_require__(4);
-	__webpack_require__(5);
+	exports.name = 'other mod'
+	console.log('[other-mod] start');
 
-	exports.name = 'common mod';
-	console.log('[common-mod] start');
+
+/***/ }),
+
+/***/ 5:
+/***/ (function(module, exports) {
+
+	exports.name = 'xlass'
+	console.log('[xlass-mod] start');
 
 
 /***/ })

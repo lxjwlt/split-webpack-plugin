@@ -5,10 +5,10 @@ webpackJsonp([2],[
 
 	var all = [];
 	all.push(new Promise(function (resolve) {
-	   __webpack_require__.e(7, resolve)
+	   __webpack_require__.e(6, resolve)
 	}));
 	all.push(new Promise(function (resolve) {
-	   __webpack_require__.e(8, resolve)
+	   __webpack_require__.e(7, resolve)
 	}));
 	Promise.all(all).then(function () {
 	    __webpack_require__._resolve([2])

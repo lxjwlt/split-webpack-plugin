@@ -45,7 +45,7 @@
 /******/ 	// "0" means "already loaded"
 /******/ 	// Array means "loading", array contains callbacks
 /******/ 	var installedChunks = {
-/******/ 		5:0
+/******/ 		3:0
 /******/ 	};
 
 /******/ 	// The require function
@@ -95,7 +95,7 @@
 /******/ 			script.charset = 'utf-8';
 /******/ 			script.async = true;
 
-/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"app","2":"cmd","3":"divide-chunk_cmd0","4":"divide-chunk_cmd1"}[chunkId]||chunkId) + ".js";
+/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"app","2":"cmd"}[chunkId]||chunkId) + ".js";
 /******/ 			head.appendChild(script);
 /******/ 		}
 /******/ 	};
@@ -125,4 +125,38 @@
 /******/ 	};
 /******/ })
 /************************************************************************/
-/******/ ([]);
+/******/ ([
+/* 0 */,
+/* 1 */
+/*!***********************!*\
+  !*** ./lib/common.js ***!
+  \***********************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	__webpack_require__(/*! ./xlass */ 2);
+	__webpack_require__(/*! ./other */ 3);
+	exports.name = 'common mod';
+
+
+/***/ }),
+/* 2 */
+/*!**********************!*\
+  !*** ./lib/xlass.js ***!
+  \**********************/
+/***/ (function(module, exports) {
+
+	exports.name = 'xlass'
+
+
+/***/ }),
+/* 3 */
+/*!**********************!*\
+  !*** ./lib/other.js ***!
+  \**********************/
+/***/ (function(module, exports) {
+
+	exports.name = 'other mod'
+
+
+/***/ })
+/******/ ]);

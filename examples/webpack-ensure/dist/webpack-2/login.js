@@ -21,12 +21,7 @@
 /******/ 		while(resolves.length) {
 /******/ 			resolves.shift()();
 /******/ 		}
-/******/ 		if(executeModules) {
-/******/ 			for(i=0; i < executeModules.length; i++) {
-/******/ 				result = __webpack_require__(__webpack_require__.s = executeModules[i]);
-/******/ 			}
-/******/ 		}
-/******/ 		return result;
+/******/
 /******/ 	};
 /******/
 /******/ 	var __parentWaitResolve = window.__webpackWaitResolve;
@@ -190,8 +185,7 @@
 /***/ 1:
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__.e/* require.ensure */(0).then((function () {
-    __webpack_require__(6);
+__webpack_require__.e/* require.ensure */(1).then((function () {
     const asyncMod = __webpack_require__(0);
 
     console.log('[ensure-mod] start')

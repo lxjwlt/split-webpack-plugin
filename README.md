@@ -1,6 +1,8 @@
 # divide-webpack-plugin
 
-![Node version][node-image] [![NPM version][npm-image]][npm-url]
+![Node version][node-image]
+[![NPM version][npm-image]][npm-url]
+[![Build status](https://travis-ci.org/lxjwlt/divide-webpack-plugin.svg)](https://travis-ci.org/lxjwlt/divide-webpack-plugin)
 
 This is a [webpack](http://webpack.github.io/) plugin for Automating segmentation process of files. That can be more helpful when we should split all files manually, especially using multiple third-party libraries. You can simply divide your files by size or the number of eventually segmented files.
 

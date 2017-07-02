@@ -1,11 +1,12 @@
-webpackJsonp([5],[
-/* 0 */,
-/* 1 */
+webpackJsonp([5],{
+
+/***/ 2:
 /***/ (function(module, exports) {
 
-	exports.name = 'async mod'
-	console.log('[async-mod] start');
+	exports.name = 'async2 mod';
+	console.log('[async2-mod] start');
 
 
 /***/ })
-]);
+
+});

@@ -5,10 +5,11 @@
   "main": "src/index.js",
   "scripts": {
     "build": "node examples/build.js",
-    "test": "npm run lint && mocha --recursive --reporter dot test/*.spec.js || exit 0",
+    "test": "npm run lint && mocha --recursive test/*.spec.js",
     "debug-build": "node --inspect --debug-brk examples/build.js",
     "debug": "node --inspect --debug-brk ./node_modules/mocha/bin/_mocha",
-    "lint": "eslint --fix '**/*.js'"
+    "lint": "eslint '**/*.js'",
+    "fix": "npm run lint -- --fix"
   },
   "keywords": [
     "webpack",
@@ -45,13 +46,12 @@
     "extract-text-webpack-plugin": "^2.1.2",
     "fs-extra": "^3.0.1",
     "html-webpack-plugin": "^2.28.0",
-    "jquery": "^3.2.1",
     "mocha": "^3.4.2",
     "style-loader": "^0.18.2",
     "webpack": "^2.6.1",
     "zombie": "^5.0.5"
   },
   "peerDependencies": {
-    "webpack": ">=2.0.0"
+    "webpack": "1 || ^2 || ^2.1.0-beta || ^2.2.0-rc || ^3"
   }
 }

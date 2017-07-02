@@ -19,10 +19,7 @@
 /******/ 		if(parentJsonpFunction) parentJsonpFunction(chunkIds, moreModules);
 /******/ 		while(callbacks.length)
 /******/ 			callbacks.shift().call(null, __webpack_require__);
-/******/ 		if(moreModules[0]) {
-/******/ 			installedModules[0] = 0;
-/******/ 			return __webpack_require__(0);
-/******/ 		}
+
 /******/ 	};
 
 /******/ 	var __parentWaitResolve = window.__webpackWaitResolve;
@@ -145,7 +142,6 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 	__webpack_require__.e/* nsure */(4, function () {
-	    __webpack_require__(7);
 	    const asyncMod = __webpack_require__(1);
 
 	    console.log('[ensure-mod] start')
