@@ -7,6 +7,7 @@ const dircompare = require('dir-compare');
 const assert = require('chai').assert;
 const OUTPUT_DIR = path.join(__dirname, '../dist');
 const {majorVersion} = require('../src/util');
+const parseConfig = require('../examples/parse-webpack-config');
 
 describe('DivideWebpackPlugin Examples', function () {
     this.timeout(0);
@@ -38,7 +39,7 @@ function runExample (exampleName, done) {
     const fixturePath = path.join(examplePath, 'dist', `webpack-${majorVersion}`);
 
     fs.remove(exampleOutput, function () {
-        const options = require(path.join(examplePath, 'webpack.config.js'));
+        const options = parseConfig(require(path.join(examplePath, 'webpack.config.js')));
 
         options.context = examplePath;
         options.output.path = exampleOutput;
