@@ -144,10 +144,10 @@ describe('DivideWebpackPlugin', function () {
 
         it('exclude chunks', function (done) {
             test({
-                entry: ['app', 'util'],
+                entry: ['app', 'login'],
                 plugins: [
                     new DividePlugin({
-                        excludeChunks: ['app'],
+                        excludeChunks: ['login'],
                         divide: 2
                     })
                 ]

@@ -3,6 +3,7 @@
 const Module = require('webpack/lib/Module');
 const RawSource = require('webpack-sources').RawSource;
 const Dependency = require('webpack/lib/Dependency');
+const util = require('./util');
 let nextId = 0;
 
 class EnsureModule extends Module {
@@ -46,9 +47,18 @@ class EnsureModule extends Module {
 
         for (let chunk of ensureChunks) {
             let chunkInfo = withInfo ? `/*! ${chunk.id}.js */` : '';
-            source.push(
-                `all.push(__webpack_require__.e(${chunkInfo}${chunk.id}).catch(__webpack_require__.oe));`
-            );
+
+            if (util.majorVersion <= 1) {
+                source.push(
+                    `all.push(new Promise(function (resolve) {`,
+                    `   __webpack_require__.e(${chunkInfo}${chunk.id}, resolve)`,
+                    `}));`
+                );
+            } else {
+                source.push(
+                    `all.push(__webpack_require__.e(${chunkInfo}${chunk.id}).catch(__webpack_require__.oe));`
+                );
+            }
         }
 
         if (this._needResolve) {

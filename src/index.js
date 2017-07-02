@@ -1,6 +1,7 @@
 'use strict';
 
 const EnsureModule = require('./EnsureModule');
+const util = require('./util');
 const ConcatSource = require('webpack-sources').ConcatSource;
 
 let nextId = 0;
@@ -255,7 +256,7 @@ class DividePlugin {
         this.entryChunkMap[chunk.name] = chunk;
 
         moduleGroups = moduleGroups.reduce((groups, group) => {
-            if (group.indexOf(chunk.entryModule) < 0) {
+            if (group.indexOf(util.getEntryModule(chunk)) < 0) {
                 groups.push(group);
             }
 
@@ -271,7 +272,7 @@ class DividePlugin {
 
             bundledModuleChunk.addChunk(lastChunk);
 
-            this.replaceChunk(bundledModuleChunk, lastChunk);
+            util.replaceChunk(bundledModuleChunk, lastChunk);
 
             lastChunk = bundledModuleChunk;
         }
@@ -292,7 +293,7 @@ class DividePlugin {
             compiler.context,
             null,
             chunk,
-            chunk.entryModule,
+            util.getEntryModule(chunk),
             compilation,
             true
         );
@@ -304,6 +305,7 @@ class DividePlugin {
         this.removeChunk(chunk, compilation);
 
         let ensureChunk = this.createChunk(compilation, chunk.name);
+        let entryModule = util.getEntryModule(chunk);
 
         for (let [index, group] of moduleGroups.entries()) {
             let bundledModuleChunk = this.bundleModules(group, chunk, index, compilation);
@@ -319,7 +321,7 @@ class DividePlugin {
             compiler.context,
             `divide-entry-module_${chunk.name}`,
             ensureChunk,
-            chunk.entryModule,
+            entryModule,
             compilation
         );
 
@@ -328,7 +330,7 @@ class DividePlugin {
             module.addChunk(ensureChunk);
         }
 
-        this.replaceChunk(ensureChunk, chunk);
+        util.replaceChunk(ensureChunk, chunk);
     }
 
     splitModules (modules) {
@@ -422,6 +424,10 @@ class DividePlugin {
     }
 
     moveModule (oldChunk, module, newChunk) {
+        if (util.isEntryModule(oldChunk, module)) {
+            util.setEntryModule(oldChunk, null);
+        }
+
         if (oldChunk.moveModule) {
             oldChunk.moveModule(module, newChunk);
             return;
@@ -431,22 +437,6 @@ class DividePlugin {
         module.addChunk(newChunk);
         newChunk.addModule(module);
         module.rewriteChunkInReasons(this, [newChunk]);
-    }
-
-    replaceChunk (newChunk, oldChunk) {
-        if (oldChunk.entry) {
-            newChunk.entry = true;
-        }
-
-        if (oldChunk.initial) {
-            newChunk.initial = true;
-        }
-
-        if (oldChunk.entrypoints) {
-            for (let entrypoint of oldChunk.entrypoints) {
-                entrypoint.insertChunk(newChunk, oldChunk);
-            }
-        }
     }
 
     removeChunk (chunk, compilation) {
@@ -476,7 +466,7 @@ class DividePlugin {
         chunk.addOrigin(ensureModule);
 
         // mark as entry
-        chunk.entryModule = ensureModule;
+        util.setEntryModule(chunk, ensureModule);
     }
 
     isEntryChunk (chunk) {

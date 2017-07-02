@@ -25,6 +25,8 @@ exports.createTest = function (files) {
 
             let entry = webpackConfig.entry;
 
+            webpackConfig.context = TEMP_DIR;
+
             webpackConfig.entry = webpackConfig.entry.reduce((map, name) => {
                 map[name] = files[name].path;
                 return map;
