@@ -1,4 +1,4 @@
-# divide-webpack-plugin
+# split-webpack-plugin
 
 ![Node version][node-image]
 [![NPM version][npm-image]][npm-url]
