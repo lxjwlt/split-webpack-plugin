@@ -4,7 +4,7 @@
 
 const util = {
 
-    majorVersion: require('webpack/package.json').version.split('.')[0],
+    majorVersion: Number(require('webpack/package.json').version.split('.')[0]),
 
     isEntryModule (chunk, module) {
         if (!module || chunk.modules.indexOf(module) < 0) {
