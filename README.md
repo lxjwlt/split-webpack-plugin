@@ -2,7 +2,9 @@
 
 ![Node version][node-image] [![NPM version][npm-image]][npm-url]
 
-This is a [webpack](http://webpack.github.io/) plugin for Automating division process of files. That can be more helpful while we should divide all files manually, especially using multiple third-party libraries. You can simply divide your files by size or the number of modules each file contains.
+This is a [webpack](http://webpack.github.io/) plugin for Automating segmentation process of files. That can be more helpful when we should split all files manually, especially using multiple third-party libraries. You can simply divide your files by size or the number of eventually segmented files.
+
+> This plugin works with **webpack 1.x and 2.x**
 
 ## Installation
 
@@ -31,7 +33,6 @@ var webpackConfig = {
 ## Configuration:
 
 - `size`: The size of each partitioned block, measured in KB
-- `divide`: The number of partitioned block which each files will be divided into. The plugin will ignore `option.size` config, when `option.divide` greater than 1
 - `async`: `true | false` default is `true`, the plugin uses `require.ensure` method to divide modules, convenient for us to insert every named entry chunks to html manually. check example: [sync](./examples/sync)
 
     But if there applies [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin) in webpack, you can set `option.async` to false, html-webpack-plugin will put all segmented modules into html template automatically：
@@ -55,8 +56,32 @@ var webpackConfig = {
 
     check example: [sync](./examples/sync).
 
-- `chunks`: add some chunks in division process
+- `chunks`: add some chunks in division process。e.g.Different config for different entries:
+
+    ```javascript
+        const DividePlugin = require('divide-webpack-plugin');
+        var webpackConfig = {
+
+            entry: {
+                app: './src/app.js',
+                login: './src/login.js'
+            },
+
+            plugins: [
+                new DivideWebpackPlugin({
+                    chunks: ['app'],
+                    size: 256 // 256 KB
+                }),
+                new DivideWebpackPlugin({
+                    chunks: ['login'],
+                    divide: 2
+                })
+            ]
+        };
+    ```
+
 - `excludeChunks`: skip these chunks from division process
+- `divide`: The number of partitioned block which each files will be divided into. The plugin will ignore `option.size` config, when `option.divide` greater than 1
 
 ## css
 
