@@ -7,6 +7,7 @@ const fse = require('fs-extra');
 const dircompare = require('dir-compare');
 const assert = require('chai').assert;
 const OUTPUT_DIR = path.join(__dirname, '../dist');
+const {majorVersion} = require('../src/util');
 
 describe('DivideWebpackPlugin Examples', function () {
     this.timeout(0);
@@ -27,7 +28,7 @@ describe('DivideWebpackPlugin Examples', function () {
 function runExample (exampleName, done) {
     const examplePath = path.resolve(__dirname, '..', 'examples', exampleName);
     const exampleOutput = path.join(OUTPUT_DIR, exampleName);
-    const fixturePath = path.join(examplePath, 'dist');
+    const fixturePath = path.join(examplePath, 'dist', `webpack-${majorVersion}`);
 
     fse.remove(exampleOutput, function () {
         const options = require(path.join(examplePath, 'webpack.config.js'));
@@ -35,7 +36,7 @@ function runExample (exampleName, done) {
         options.context = examplePath;
         options.output.path = exampleOutput;
 
-        webpack(options, function (err, stats) {
+        webpack(options, function (err) {
             const res = dircompare.compareSync(fixturePath, exampleOutput, {
                 compareSize: true
             });
