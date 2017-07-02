@@ -2,7 +2,7 @@
 
 ![Node version][node-image]
 [![NPM version][npm-image]][npm-url]
-[![Build status](https://travis-ci.org/lxjwlt/divide-webpack-plugin.svg)](https://travis-ci.org/lxjwlt/divide-webpack-plugin)
+[![Build status](https://travis-ci.org/lxjwlt/split-webpack-plugin.svg)](https://travis-ci.org/lxjwlt/split-webpack-plugin)
 
 This is a [webpack](http://webpack.github.io/) plugin for Automating segmentation process of files. That can be more helpful when we should split all files manually, especially using multiple third-party libraries. You can simply divide your files by size or the number of eventually segmented files.
 
@@ -11,7 +11,7 @@ This is a [webpack](http://webpack.github.io/) plugin for Automating segmentatio
 ## Installation
 
 ```
-npm install divide-webpack-plugin -D
+npm install split-webpack-plugin -D
 ```
 
 ## Usage
@@ -19,7 +19,7 @@ npm install divide-webpack-plugin -D
 Add the plugin to [webpack plugins configure](https://webpack.js.org/concepts/plugins/):
 
 ```javascript
-var DividePlugin = require('divide-webpack-plugin');
+var DividePlugin = require('split-webpack-plugin');
 var webpackConfig = {
 
     // ...
@@ -40,7 +40,7 @@ var webpackConfig = {
     But if there applies [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin) in webpack, you can set `option.async` to false, html-webpack-plugin will put all segmented modules into html template automatically：
 
     ```javascript
-    const DividePlugin = require('divide-webpack-plugin');
+    const DividePlugin = require('split-webpack-plugin');
     const HtmlPlugin = require('html-webpack-plugin');
     var webpackConfig = {
 
@@ -61,7 +61,7 @@ var webpackConfig = {
 - `chunks`: add some chunks in division process。e.g.Different config for different entries:
 
     ```javascript
-        const DividePlugin = require('divide-webpack-plugin');
+        const DividePlugin = require('split-webpack-plugin');
         var webpackConfig = {
 
             entry: {
@@ -89,6 +89,6 @@ var webpackConfig = {
 
 When `options.async:true`, divide-plugin would't partition the files that have been processed by `css-loader` or `style-loader`, so the css files can be loaded immediately. but a better way is to use [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin)。check example: [extract-css](./examples/extract-css).
 
-[npm-url]: https://www.npmjs.com/package/divide-webpack-plugin
-[npm-image]: https://img.shields.io/npm/v/divide-webpack-plugin.svg
-[node-image]: https://img.shields.io/node/v/divide-webpack-plugin.svg
+[npm-url]: https://www.npmjs.com/package/split-webpack-plugin
+[npm-image]: https://img.shields.io/npm/v/split-webpack-plugin.svg
+[node-image]: https://img.shields.io/node/v/split-webpack-plugin.svg
