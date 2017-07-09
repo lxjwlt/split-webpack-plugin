@@ -53,7 +53,7 @@ class DividePlugin {
 
                     let bundleMethod = this.options.async ? 'doAsync' : 'doSync';
 
-                    if (this.isAsyncChunk(chunk)) {
+                    if (util.isAsyncChunk(chunk)) {
                         bundleMethod = 'doAsyncChunk';
                     }
 
@@ -216,14 +216,14 @@ class DividePlugin {
             return false;
         }
 
-        if (this.isAsyncChunk(chunk)) {
+        if (util.isAsyncChunk(chunk)) {
             let entryChunk = this.getEntryChunk(chunk);
             return entryChunk
                 ? this.isValidChunk(entryChunk, compilation, true) : false;
         }
 
         // only entry chunk
-        if (!this.isEntryChunk(chunk)) {
+        if (!util.isEntryChunk(chunk)) {
             return false;
         }
 
@@ -240,16 +240,12 @@ class DividePlugin {
 
     getEntryChunk (chunk) {
         while (chunk) {
-            if (this.isEntryChunk(chunk)) {
+            if (util.isEntryChunk(chunk)) {
                 return chunk;
             }
 
             chunk = chunk.parents[0];
         }
-    }
-
-    isAsyncChunk (chunk) {
-        return !this.isEntryChunk(chunk) && !chunk.name;
     }
 
     doSync (compiler, compilation, chunk, moduleGroups) {
@@ -467,14 +463,6 @@ class DividePlugin {
 
         // mark as entry
         util.setEntryModule(chunk, ensureModule);
-    }
-
-    isEntryChunk (chunk) {
-        if (chunk.hasRuntime) {
-            return chunk.hasRuntime();
-        }
-
-        return chunk.entry;
     }
 }
 

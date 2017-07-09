@@ -6,6 +6,21 @@ const util = {
 
     majorVersion: Number(require('webpack/package.json').version.split('.')[0]),
 
+    isEntryChunk (chunk) {
+        if (chunk.hasRuntime) {
+            return chunk.hasRuntime();
+        }
+
+        return chunk.entry;
+    },
+
+    isAsyncChunk (chunk) {
+        if (chunk.isInitial) {
+            return !chunk.isInitial();
+        }
+        return !chunk.initial;
+    },
+
     isEntryModule (chunk, module) {
         if (!module || chunk.modules.indexOf(module) < 0) {
             return false;
