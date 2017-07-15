@@ -2,7 +2,6 @@
 
 const EnsureModule = require('./EnsureModule');
 const util = require('./util');
-const ConcatSource = require('webpack-sources').ConcatSource;
 
 let nextId = 0;
 let compilationMap = new Map();
@@ -42,9 +41,14 @@ class DividePlugin {
 
                 compilation[this.ident] = true;
 
-                this.initEvent(compilation);
+                compilationMap.set(compilation, new Set());
 
-                for (let chunk of [...chunks]) {
+                // entry chunk run first
+                let originChunks = [...chunks].sort((a, b) => {
+                    return !util.isEntryChunk(a) && util.isEntryChunk(b) ? 1 : 0;
+                });
+
+                for (let chunk of originChunks) {
                     if (!this.isValidChunk(chunk, compilation)) {
                         continue;
                     }
@@ -117,109 +121,14 @@ class DividePlugin {
         });
     }
 
-    initEvent (compilation) {
-        if (compilationMap.has(compilation)) {
-            return;
-        }
-
-        compilationMap.set(compilation, new Set());
-
-        compilation.mainTemplate.plugin('bootstrap', function (source, chunk) {
-            if (chunk.chunks.length > 0) {
-                return this.asString([
-                    source,
-                    '',
-                    'var __parentWaitResolve = window.__webpackWaitResolve;',
-                    'var __waitResolveChunks = {};',
-                    `window.__webpackWaitResolve = function (chunkIds) {`,
-                    this.indent([
-                        'for(var i = 0;i < chunkIds.length; i++) {',
-                        this.indent([
-                            'var chunkId = chunkIds[i];',
-                            'if(installedChunks[chunkId]) {',
-                            this.indent([
-                                '__waitResolveChunks[chunkId] = installedChunks[chunkId];',
-                                'installedChunks[chunkId] = 0;'
-                            ]),
-                            '}'
-                        ]),
-                        '}',
-                        'if(__parentWaitResolve) __parentWaitResolve(chunkIds);'
-                    ]),
-                    '};'
-                ]);
-            }
-
-            return source;
-        });
-
-        compilation.chunkTemplate.plugin('render', function (oldSource, chunk) {
-            if (!chunk.__isAsync) {
-                return oldSource;
-            }
-
-            let source = new ConcatSource();
-
-            source.add(`__webpackWaitResolve(${JSON.stringify(chunk.ids)});`);
-
-            source.add('\n');
-
-            source.add(oldSource);
-
-            return source;
-        });
-
-        compilation.mainTemplate.plugin('require-extensions', function (source) {
-            return this.asString([
-                source,
-                '',
-                `${this.requireFn}._resolve = function (chunkIds) {`,
-                this.indent([
-                    'var chunkId, i = 0, resolves = [];',
-                    'for(;i < chunkIds.length; i++) {',
-                    this.indent([
-                        'chunkId = chunkIds[i];',
-                        'if(__waitResolveChunks[chunkId]) {',
-                        this.indent([
-                            'resolves.push(__waitResolveChunks[chunkId][0]);'
-                        ]),
-                        '}',
-                        'installedChunks[chunkId] = 0;',
-                        '__waitResolveChunks[chunkId] = undefined;'
-                    ]),
-                    '}',
-                    'while(resolves.length) {',
-                    this.indent([
-                        'resolves.shift()();'
-                    ]),
-                    '}'
-                ]),
-                '};'
-            ]);
-        });
-
-        compilation.mainTemplate.plugin('require-ensure', function (source) {
-            return this.asString([
-                'if(__waitResolveChunks[chunkId]) {',
-                this.indent([
-                    'return __waitResolveChunks[chunkId][2];'
-                ]),
-                '}',
-                '',
-                source
-            ]);
-        });
-    }
-
     isValidChunk (chunk, compilation, reuse) {
         if (!reuse && compilationMap.get(compilation).has(chunk)) {
             return false;
         }
 
         if (util.isAsyncChunk(chunk)) {
-            let entryChunk = this.getEntryChunk(chunk);
-            return entryChunk
-                ? this.isValidChunk(entryChunk, compilation, true) : false;
+            return this.getEntryChunk(chunk).some((entryChunk) =>
+                this.isValidChunk(entryChunk, compilation, true));
         }
 
         // only entry chunk
@@ -239,13 +148,21 @@ class DividePlugin {
     }
 
     getEntryChunk (chunk) {
-        while (chunk) {
-            if (util.isEntryChunk(chunk)) {
-                return chunk;
-            }
-
-            chunk = chunk.parents[0];
+        if (!chunk) {
+            return [];
         }
+
+        if (util.isEntryChunk(chunk)) {
+            return [chunk];
+        }
+
+        let result = [];
+
+        chunk.parents.forEach((parent) => {
+            result = result.concat(this.getEntryChunk(parent));
+        });
+
+        return result;
     }
 
     doSync (compiler, compilation, chunk, moduleGroups) {
@@ -275,24 +192,23 @@ class DividePlugin {
     }
 
     doAsyncChunk (compiler, compilation, chunk, moduleGroups) {
-        chunk.__isAsync = true;
-
         for (let [index, group] of moduleGroups.entries()) {
-            let bundledModuleChunk = this.bundleModules(group, chunk, index, compilation);
+            const asyncChunk = this.bundleModules(group, chunk, index, compilation);
 
-            bundledModuleChunk.parents = [chunk];
+            asyncChunk.chunkReason = 'async split chunk';
 
-            chunk.addChunk(bundledModuleChunk);
+            asyncChunk.extraAsync = true;
+
+            for (let block of chunk.blocks) {
+                block.chunks.unshift(asyncChunk);
+                asyncChunk.addBlock(block);
+            }
+
+            for (let targetChunk of chunk.parents) {
+                asyncChunk.addParent(targetChunk);
+                targetChunk.addChunk(asyncChunk);
+            }
         }
-
-        this.createEntryModule(
-            compiler.context,
-            null,
-            chunk,
-            util.getEntryModule(chunk),
-            compilation,
-            true
-        );
     }
 
     doAsync (compiler, compilation, chunk, moduleGroups, excludeModules) {
@@ -306,7 +222,7 @@ class DividePlugin {
         for (let [index, group] of moduleGroups.entries()) {
             let bundledModuleChunk = this.bundleModules(group, chunk, index, compilation);
 
-            bundledModuleChunk.chunks = [...chunk.chunks];
+            this.moveChildChunks(chunk, bundledModuleChunk);
 
             bundledModuleChunk.parents = [ensureChunk];
 
@@ -326,7 +242,28 @@ class DividePlugin {
             module.addChunk(ensureChunk);
         }
 
+        this.moveChildChunks(chunk, ensureChunk);
+
         util.replaceChunk(ensureChunk, chunk);
+    }
+
+    moveChildChunks (oldChunk, newChunk) {
+        oldChunk.chunks.forEach((asyncChunk) => {
+            asyncChunk.origins.forEach((info) => {
+                if (newChunk.modules.indexOf(info.module) > -1 &&
+                    newChunk.chunks.indexOf(asyncChunk) < 0) {
+                    newChunk.addChunk(asyncChunk);
+
+                    let originParentIndex = asyncChunk.parents.indexOf(oldChunk);
+
+                    if (originParentIndex > -1) {
+                        asyncChunk.parents.splice(originParentIndex, 1);
+                    }
+
+                    asyncChunk.addParent(newChunk);
+                }
+            });
+        });
     }
 
     splitModules (modules) {
@@ -432,7 +369,7 @@ class DividePlugin {
         module.removeChunk(oldChunk);
         module.addChunk(newChunk);
         newChunk.addModule(module);
-        module.rewriteChunkInReasons(this, [newChunk]);
+        module.rewriteChunkInReasons(oldChunk, [newChunk]);
     }
 
     removeChunk (chunk, compilation) {
@@ -443,14 +380,12 @@ class DividePlugin {
         delete compilation.namedChunks[chunk.name];
     }
 
-    createEntryModule (context, name, chunk, oldEntryModule, compilation, needResolve) {
+    createEntryModule (context, name, chunk, oldEntryModule, compilation) {
         let ensureModule = new EnsureModule({
             context: context,
             name: name,
             chunks: chunk.chunks,
-            oldEntryModule: oldEntryModule,
-            chunk: chunk,
-            needResolve: needResolve
+            oldEntryModule: oldEntryModule
         });
 
         compilation.addModule(ensureModule);

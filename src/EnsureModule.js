@@ -12,10 +12,8 @@ class EnsureModule extends Module {
         this._oldEntryModule = options.oldEntryModule;
         this.context = options.context;
         this.name = options.name || `ensure-module-${nextId++}`;
-        this._chunk = options.chunk;
         this.ensureChunks = options.chunks;
         this.built = false;
-        this._needResolve = options.needResolve;
 
         // fake dependencies to insert __webpack_require__
         this.dependencies = [new Dependency()];
@@ -59,14 +57,6 @@ class EnsureModule extends Module {
                     `all.push(__webpack_require__.e(${chunkInfo}${chunk.id}).catch(__webpack_require__.oe));`
                 );
             }
-        }
-
-        if (this._needResolve) {
-            source.push(
-                `Promise.all(all).then(function () {`,
-                `    __webpack_require__._resolve(${JSON.stringify(this._chunk.ids)})`,
-                `}).catch(__webpack_require__.oe)`
-            );
         }
 
         if (this._oldEntryModule) {
