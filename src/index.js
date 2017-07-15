@@ -127,7 +127,7 @@ class DividePlugin {
         }
 
         if (util.isAsyncChunk(chunk)) {
-            return this.getEntryChunk(chunk).some((entryChunk) =>
+            return util.getEntryChunk(chunk).some((entryChunk) =>
                 this.isValidChunk(entryChunk, compilation, true));
         }
 
@@ -145,24 +145,6 @@ class DividePlugin {
         }
 
         return true;
-    }
-
-    getEntryChunk (chunk) {
-        if (!chunk) {
-            return [];
-        }
-
-        if (util.isEntryChunk(chunk)) {
-            return [chunk];
-        }
-
-        let result = [];
-
-        chunk.parents.forEach((parent) => {
-            result = result.concat(this.getEntryChunk(parent));
-        });
-
-        return result;
     }
 
     doSync (compiler, compilation, chunk, moduleGroups) {
@@ -348,28 +330,12 @@ class DividePlugin {
         let newChunk = this.createChunk(compilation, chunkName);
 
         for (let module of modules) {
-            this.moveModule(oldChunk, module, newChunk);
+            util.moveModule(oldChunk, module, newChunk);
         }
 
         compilationMap.get(compilation).add(newChunk);
 
         return newChunk;
-    }
-
-    moveModule (oldChunk, module, newChunk) {
-        if (util.isEntryModule(oldChunk, module)) {
-            util.setEntryModule(oldChunk, null);
-        }
-
-        if (oldChunk.moveModule) {
-            oldChunk.moveModule(module, newChunk);
-            return;
-        }
-
-        module.removeChunk(oldChunk);
-        module.addChunk(newChunk);
-        newChunk.addModule(module);
-        module.rewriteChunkInReasons(oldChunk, [newChunk]);
     }
 
     removeChunk (chunk, compilation) {

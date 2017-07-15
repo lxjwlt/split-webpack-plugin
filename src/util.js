@@ -70,6 +70,40 @@ const util = {
                 newChunk.initial = true;
             }
         }
+    },
+
+    getEntryChunk (chunk) {
+        if (!chunk) {
+            return [];
+        }
+
+        if (util.isEntryChunk(chunk)) {
+            return [chunk];
+        }
+
+        let result = [];
+
+        chunk.parents.forEach((parent) => {
+            result = result.concat(util.getEntryChunk(parent));
+        });
+
+        return result;
+    },
+
+    moveModule (oldChunk, module, newChunk) {
+        if (util.isEntryModule(oldChunk, module)) {
+            util.setEntryModule(oldChunk, null);
+        }
+
+        if (oldChunk.moveModule) {
+            oldChunk.moveModule(module, newChunk);
+            return;
+        }
+
+        module.removeChunk(oldChunk);
+        module.addChunk(newChunk);
+        newChunk.addModule(module);
+        module.rewriteChunkInReasons(oldChunk, [newChunk]);
     }
 
 };
