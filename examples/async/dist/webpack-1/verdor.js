@@ -25,19 +25,6 @@
 /******/ 		}
 /******/ 	};
 
-/******/ 	var __parentWaitResolve = window.__webpackWaitResolve;
-/******/ 	var __waitResolveChunks = {};
-/******/ 	window.__webpackWaitResolve = function (chunkIds) {
-/******/ 		for(var i = 0;i < chunkIds.length; i++) {
-/******/ 			var chunkId = chunkIds[i];
-/******/ 			if(installedChunks[chunkId]) {
-/******/ 				__waitResolveChunks[chunkId] = installedChunks[chunkId];
-/******/ 				installedChunks[chunkId] = 0;
-/******/ 			}
-/******/ 		}
-/******/ 		if(__parentWaitResolve) __parentWaitResolve(chunkIds);
-/******/ 	};
-
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 
@@ -45,7 +32,7 @@
 /******/ 	// "0" means "already loaded"
 /******/ 	// Array means "loading", array contains callbacks
 /******/ 	var installedChunks = {
-/******/ 		3:0
+/******/ 		8:0
 /******/ 	};
 
 /******/ 	// The require function
@@ -75,10 +62,6 @@
 /******/ 	// This file contains only the entry chunk.
 /******/ 	// The chunk loading function for additional chunks
 /******/ 	__webpack_require__.e = function requireEnsure(chunkId, callback) {
-/******/ 		if(__waitResolveChunks[chunkId]) {
-/******/ 			return __waitResolveChunks[chunkId][2];
-/******/ 		}
-
 /******/ 		// "0" is the signal for "already loaded"
 /******/ 		if(installedChunks[chunkId] === 0)
 /******/ 			return callback.call(null, __webpack_require__);
@@ -95,7 +78,7 @@
 /******/ 			script.charset = 'utf-8';
 /******/ 			script.async = true;
 
-/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"app","2":"cmd"}[chunkId]||chunkId) + ".js";
+/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"app","1":"divide-chunk_app0","2":"divide-chunk_app1","3":"cmd","4":"divide-chunk_cmd0","5":"divide-chunk_cmd1"}[chunkId]||chunkId) + ".js";
 /******/ 			head.appendChild(script);
 /******/ 		}
 /******/ 	};
@@ -108,55 +91,6 @@
 
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-
-/******/ 	__webpack_require__._resolve = function (chunkIds) {
-/******/ 		var chunkId, i = 0, resolves = [];
-/******/ 		for(;i < chunkIds.length; i++) {
-/******/ 			chunkId = chunkIds[i];
-/******/ 			if(__waitResolveChunks[chunkId]) {
-/******/ 				resolves.push(__waitResolveChunks[chunkId][0]);
-/******/ 			}
-/******/ 			installedChunks[chunkId] = 0;
-/******/ 			__waitResolveChunks[chunkId] = undefined;
-/******/ 		}
-/******/ 		while(resolves.length) {
-/******/ 			resolves.shift()();
-/******/ 		}
-/******/ 	};
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */,
-/* 1 */
-/*!***********************!*\
-  !*** ./lib/common.js ***!
-  \***********************/
-/***/ (function(module, exports, __webpack_require__) {
-
-	__webpack_require__(/*! ./xlass */ 2);
-	__webpack_require__(/*! ./other */ 3);
-	exports.name = 'common mod';
-
-
-/***/ }),
-/* 2 */
-/*!**********************!*\
-  !*** ./lib/xlass.js ***!
-  \**********************/
-/***/ (function(module, exports) {
-
-	exports.name = 'xlass'
-
-
-/***/ }),
-/* 3 */
-/*!**********************!*\
-  !*** ./lib/other.js ***!
-  \**********************/
-/***/ (function(module, exports) {
-
-	exports.name = 'other mod'
-
-
-/***/ })
-/******/ ]);
+/******/ ([]);

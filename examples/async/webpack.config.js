@@ -14,7 +14,7 @@ module.exports = {
     },
     plugins: [
         new DividePlugin({
-            size: 100
+            divide: 2
         }),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'verdor'

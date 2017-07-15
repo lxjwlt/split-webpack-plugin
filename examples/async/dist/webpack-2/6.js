@@ -1,29 +1,29 @@
-webpackJsonp([0,3],[
-/* 0 */,
-/* 1 */,
-/* 2 */,
-/* 3 */
+webpackJsonp([6],{
+
+/***/ 5:
 /* no static exports found */
 /* all exports used */
 /*!**********************!*\
-  !*** ./lib/async.js ***!
+  !*** ./lib/other.js ***!
   \**********************/
 /***/ (function(module, exports) {
 
-exports.name = 'async mod'
+exports.name = 'other mod'
 
 
 /***/ }),
-/* 4 */
+
+/***/ 6:
 /* no static exports found */
 /* all exports used */
-/*!***********************!*\
-  !*** ./lib/async2.js ***!
-  \***********************/
+/*!**********************!*\
+  !*** ./lib/xlass.js ***!
+  \**********************/
 /***/ (function(module, exports) {
 
-exports.name = 'async2 mod';
+exports.name = 'xlass'
 
 
 /***/ })
-]);
+
+});

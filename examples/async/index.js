@@ -1,8 +1,6 @@
-const common = require('./lib/common');
+const asyncMod = require('./lib/async');
+const asyncMod2 = require('./lib/async2');
 
-console.log('[index]', common.name);
-
-require.ensure([], function () {
-    const asyncMod = require('./lib/async');
-    const asyncMod2 = require('./lib/async2');
-})
+require.ensure(['./lib/common'], function (require) {
+    require('./lib/common')
+});

@@ -24,19 +24,6 @@
 /******/
 /******/ 	};
 /******/
-/******/ 	var __parentWaitResolve = window.__webpackWaitResolve;
-/******/ 	var __waitResolveChunks = {};
-/******/ 	window.__webpackWaitResolve = function (chunkIds) {
-/******/ 		for(var i = 0;i < chunkIds.length; i++) {
-/******/ 			var chunkId = chunkIds[i];
-/******/ 			if(installedChunks[chunkId]) {
-/******/ 				__waitResolveChunks[chunkId] = installedChunks[chunkId];
-/******/ 				installedChunks[chunkId] = 0;
-/******/ 			}
-/******/ 		}
-/******/ 		if(__parentWaitResolve) __parentWaitResolve(chunkIds);
-/******/ 	};
-/******/
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -72,10 +59,6 @@
 /******/ 	// This file contains only the entry chunk.
 /******/ 	// The chunk loading function for additional chunks
 /******/ 	__webpack_require__.e = function requireEnsure(chunkId) {
-/******/ 		if(__waitResolveChunks[chunkId]) {
-/******/ 			return __waitResolveChunks[chunkId][2];
-/******/ 		}
-/******/
 /******/ 		var installedChunkData = installedChunks[chunkId];
 /******/ 		if(installedChunkData === 0) {
 /******/ 			return new Promise(function(resolve) { resolve(); });
@@ -161,21 +144,6 @@
 /******/ 	// on error function for async loading
 /******/ 	__webpack_require__.oe = function(err) { console.error(err); throw err; };
 /******/
-/******/ 	__webpack_require__._resolve = function (chunkIds) {
-/******/ 		var chunkId, i = 0, resolves = [];
-/******/ 		for(;i < chunkIds.length; i++) {
-/******/ 			chunkId = chunkIds[i];
-/******/ 			if(__waitResolveChunks[chunkId]) {
-/******/ 				resolves.push(__waitResolveChunks[chunkId][0]);
-/******/ 			}
-/******/ 			installedChunks[chunkId] = 0;
-/******/ 			__waitResolveChunks[chunkId] = undefined;
-/******/ 		}
-/******/ 		while(resolves.length) {
-/******/ 			resolves.shift()();
-/******/ 		}
-/******/ 	};
-/******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
@@ -185,7 +153,7 @@
 /***/ 1:
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__.e/* require.ensure */(1).then((function () {
+__webpack_require__.e/* require.ensure */(0).then((function () {
     const asyncMod = __webpack_require__(0);
 
     console.log('[ensure-mod] start')

@@ -1,19 +1,10 @@
 webpackJsonp([3],{
 
-/***/ 8:
+/***/ 3:
 /***/ (function(module, exports) {
 
-exports.name = 'other mod'
-console.log('[other-mod] start');
-
-
-/***/ }),
-
-/***/ 9:
-/***/ (function(module, exports) {
-
-exports.name = 'xlass'
-console.log('[xlass-mod] start');
+exports.name = 'async2 mod';
+console.log('[async2-mod] start');
 
 
 /***/ })

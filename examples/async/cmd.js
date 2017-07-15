@@ -1,4 +1,5 @@
-const common = require('./lib/common');
-const xlass = require('./lib/xlass');
+const asyncMod = require('./lib/async');
 
-console.log('[cmd]', common.name);
+require.ensure(['./lib/common'], function (require) {
+    require('./lib/common')
+});

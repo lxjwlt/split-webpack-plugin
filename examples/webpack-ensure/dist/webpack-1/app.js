@@ -19,23 +19,7 @@
 /******/ 		if(parentJsonpFunction) parentJsonpFunction(chunkIds, moreModules);
 /******/ 		while(callbacks.length)
 /******/ 			callbacks.shift().call(null, __webpack_require__);
-/******/ 		if(moreModules[0]) {
-/******/ 			installedModules[0] = 0;
-/******/ 			return __webpack_require__(0);
-/******/ 		}
-/******/ 	};
 
-/******/ 	var __parentWaitResolve = window.__webpackWaitResolve;
-/******/ 	var __waitResolveChunks = {};
-/******/ 	window.__webpackWaitResolve = function (chunkIds) {
-/******/ 		for(var i = 0;i < chunkIds.length; i++) {
-/******/ 			var chunkId = chunkIds[i];
-/******/ 			if(installedChunks[chunkId]) {
-/******/ 				__waitResolveChunks[chunkId] = installedChunks[chunkId];
-/******/ 				installedChunks[chunkId] = 0;
-/******/ 			}
-/******/ 		}
-/******/ 		if(__parentWaitResolve) __parentWaitResolve(chunkIds);
 /******/ 	};
 
 /******/ 	// The module cache
@@ -75,10 +59,6 @@
 /******/ 	// This file contains only the entry chunk.
 /******/ 	// The chunk loading function for additional chunks
 /******/ 	__webpack_require__.e = function requireEnsure(chunkId, callback) {
-/******/ 		if(__waitResolveChunks[chunkId]) {
-/******/ 			return __waitResolveChunks[chunkId][2];
-/******/ 		}
-
 /******/ 		// "0" is the signal for "already loaded"
 /******/ 		if(installedChunks[chunkId] === 0)
 /******/ 			return callback.call(null, __webpack_require__);
@@ -109,21 +89,6 @@
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
 
-/******/ 	__webpack_require__._resolve = function (chunkIds) {
-/******/ 		var chunkId, i = 0, resolves = [];
-/******/ 		for(;i < chunkIds.length; i++) {
-/******/ 			chunkId = chunkIds[i];
-/******/ 			if(__waitResolveChunks[chunkId]) {
-/******/ 				resolves.push(__waitResolveChunks[chunkId][0]);
-/******/ 			}
-/******/ 			installedChunks[chunkId] = 0;
-/******/ 			__waitResolveChunks[chunkId] = undefined;
-/******/ 		}
-/******/ 		while(resolves.length) {
-/******/ 			resolves.shift()();
-/******/ 		}
-/******/ 	};
-
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);
 /******/ })
@@ -133,15 +98,15 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 	
-	__webpack_require__.e/* nsure */(1, function () {
+	(function(/* nsure */) {var __WEBPACK_REMAINING_CHUNKS__ = 2;var __WEBPACK_CALLBACK__ = function() {if(--__WEBPACK_REMAINING_CHUNKS__ < 1) (function () {
 	    const asyncMod = __webpack_require__(1);
 	    const asyncMod2 = __webpack_require__(2);
 
-	    __webpack_require__.e/* nsure */(2, function () {
+	    (function(/* nsure */) {var __WEBPACK_REMAINING_CHUNKS__ = 2;var __WEBPACK_CALLBACK__ = function() {if(--__WEBPACK_REMAINING_CHUNKS__ < 1) (function () {
 	        __webpack_require__(3);
 	        console.log('[index-mod] start');
-	    });
-	});
+	    }(__webpack_require__));}.bind(this);__webpack_require__.e(5, __WEBPACK_CALLBACK__);__webpack_require__.e(4, __WEBPACK_CALLBACK__);}).call(this);
+	}(__webpack_require__));}.bind(this);__webpack_require__.e(3, __WEBPACK_CALLBACK__);__webpack_require__.e(2, __WEBPACK_CALLBACK__);}).call(this);
 
 
 /***/ })

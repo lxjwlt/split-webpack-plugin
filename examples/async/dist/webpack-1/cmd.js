@@ -1,15 +1,20 @@
-webpackJsonp([2],[
+webpackJsonp([3,8],[
 /* 0 */
-/*!****************!*\
-  !*** ./cmd.js ***!
-  \****************/
+/*!**************************************!*\
+  !*** ensure divide-entry-module_cmd ***!
+  \**************************************/
 /***/ (function(module, exports, __webpack_require__) {
 
-	const common = __webpack_require__(/*! ./lib/common */ 1);
-	const xlass = __webpack_require__(/*! ./lib/xlass */ 2);
-
-	console.log('[cmd]', common.name);
-
+	var all = [];
+	all.push(new Promise(function (resolve) {
+	   __webpack_require__.e(/*! 4.js */4, resolve)
+	}));
+	all.push(new Promise(function (resolve) {
+	   __webpack_require__.e(/*! 5.js */5, resolve)
+	}));
+	Promise.all(all).then(function () {
+	    __webpack_require__(/*! ./cmd.js */7)
+	}).catch(__webpack_require__.oe)
 
 /***/ })
 ]);

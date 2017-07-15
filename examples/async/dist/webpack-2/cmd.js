@@ -1,19 +1,17 @@
-webpackJsonp([2],{
-
-/***/ 2:
-/* no static exports found */
-/* all exports used */
-/*!****************!*\
-  !*** ./cmd.js ***!
-  \****************/
+webpackJsonp([1],[
+/* 0 */,
+/* 1 */
+/*!**************************************!*\
+  !*** ensure divide-entry-module_cmd ***!
+  \**************************************/
 /***/ (function(module, exports, __webpack_require__) {
 
-const common = __webpack_require__(/*! ./lib/common */ 0);
-const xlass = __webpack_require__(/*! ./lib/xlass */ 1);
-
-console.log('[cmd]', common.name);
-
+var all = [];
+all.push(__webpack_require__.e(/*! 3.js */3).catch(__webpack_require__.oe));
+all.push(__webpack_require__.e(/*! 5.js */5).catch(__webpack_require__.oe));
+Promise.all(all).then(function () {
+    __webpack_require__(/*! ./cmd.js */7)
+}).catch(__webpack_require__.oe)
 
 /***/ })
-
-},[2]);
+],[1]);

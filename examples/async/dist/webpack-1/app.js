@@ -1,19 +1,20 @@
-webpackJsonp([0],[
+webpackJsonp([0,8],[
 /* 0 */
-/*!******************!*\
-  !*** ./index.js ***!
-  \******************/
+/*!**************************************!*\
+  !*** ensure divide-entry-module_app ***!
+  \**************************************/
 /***/ (function(module, exports, __webpack_require__) {
 
-	const common = __webpack_require__(/*! ./lib/common */ 1);
-
-	console.log('[index]', common.name);
-
-	__webpack_require__.e/* nsure */(1, function () {
-	    const asyncMod = __webpack_require__(/*! ./lib/async */ 4);
-	    const asyncMod2 = __webpack_require__(/*! ./lib/async2 */ 5);
-	})
-
+	var all = [];
+	all.push(new Promise(function (resolve) {
+	   __webpack_require__.e(/*! 1.js */1, resolve)
+	}));
+	all.push(new Promise(function (resolve) {
+	   __webpack_require__.e(/*! 2.js */2, resolve)
+	}));
+	Promise.all(all).then(function () {
+	    __webpack_require__(/*! ./index.js */1)
+	}).catch(__webpack_require__.oe)
 
 /***/ })
 ]);
