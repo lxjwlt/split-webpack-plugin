@@ -86,22 +86,22 @@ class DividePlugin {
                     sortMode = 'dependency';
                 }
 
-                let targetChunks = plugin.options.chunks;
+                let targetChunks = plugin.options.chunks || 'all';
+
+                let excludeChunks = plugin.options.excludeChunks || [];
 
                 // if html-webpack-plugin not specify chunks
-                if (targetChunks === 'all' || !targetChunks) {
+                if (targetChunks === 'all' && !excludeChunks.length) {
                     return plugin.sortChunks(chunks, sortMode);
                 }
 
                 let allChunks = compilation.getStats().toJson().chunks;
 
-                let excludeChunks = plugin.options.excludeChunks;
-
                 let ids = [];
 
                 for (let name of Object.keys(this.entryChunkMap)) {
                     if (excludeChunks.indexOf(name) >= 0 ||
-                        targetChunks.indexOf(name) < 0) {
+                        (targetChunks !== 'all' && targetChunks.indexOf(name) < 0)) {
                         continue;
                     }
 
