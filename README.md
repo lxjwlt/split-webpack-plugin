@@ -6,7 +6,7 @@
 
 This is a [webpack](http://webpack.github.io/) plugin for Automating segmentation process of files. That can be more helpful when we should split all files manually, especially using multiple third-party libraries. You can simply divide your files by size or the number of eventually segmented files.
 
-> This plugin works with **webpack 1.x and 2.x**
+> This plugin works with **webpack 1.x, 2.x and 3.x**
 
 ## Installation
 
@@ -16,16 +16,16 @@ npm install split-webpack-plugin -D
 
 ## Usage
 
-Add the plugin to [webpack plugins configure](https://webpack.js.org/concepts/plugins/):
+Add the plugin to [webpack plugins configure](https://webpack.js.org/concepts/plugins/#usage):
 
 ```javascript
-var DividePlugin = require('split-webpack-plugin');
+var SplitPlugin = require('split-webpack-plugin');
 var webpackConfig = {
 
     // ...
 
     plugins: [
-        new DividePlugin({
+        new SplitPlugin({
             size: 512 // 512 KB
         })
     ]
@@ -35,15 +35,18 @@ var webpackConfig = {
 ## Configuration:
 
 - `size`: The size of each partitioned block, measured in KB
-- `async`: `true | false` default is `true`, the plugin uses `require.ensure` method to divide modules, convenient for us to insert every named entry chunks to html manually. check example: [sync](./examples/sync)
+- `async`: `true | false` default is `true`, the plugin uses `require.ensure` method to divide modules, so we simply insert entry chunk to html manually to startup our app. check example: [async](./examples/async)
 
-    But if there applies [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin) in webpack, you can set `option.async` to false, html-webpack-plugin will put all segmented modules into html template automatically：
+    however if plugins has applied [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin) in webpack, you can set `option.async` to `false`, html-webpack-plugin will put all segmented chunks into html template automatically：
 
     ```javascript
     const DividePlugin = require('split-webpack-plugin');
     const HtmlPlugin = require('html-webpack-plugin');
     var webpackConfig = {
 
+        entry: {
+            app: './app.js'
+        },
         // ...
 
         plugins: [
@@ -56,25 +59,31 @@ var webpackConfig = {
     };
     ```
 
+    Automatically generated html would be like:
+
+    ```html
+    <script type="text/javascript" src="divide-chunk_app0.js"></script>
+    <script type="text/javascript" src="divide-chunk_app1.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+    ```
+
     check example: [sync](./examples/sync).
 
-- `chunks`: add some chunks in division process。e.g.Different config for different entries:
+- `chunks`: specific entry chunks in segmentation process, default is all entries. e.g.Different config for different entries:
 
     ```javascript
-        const DividePlugin = require('split-webpack-plugin');
+        const SplitPlugin = require('split-webpack-plugin');
         var webpackConfig = {
-
             entry: {
                 app: './src/app.js',
                 login: './src/login.js'
             },
-
             plugins: [
-                new DivideWebpackPlugin({
+                new SplitPlugin({
                     chunks: ['app'],
                     size: 256 // 256 KB
                 }),
-                new DivideWebpackPlugin({
+                new SplitPlugin({
                     chunks: ['login'],
                     divide: 2
                 })
@@ -82,12 +91,34 @@ var webpackConfig = {
         };
     ```
 
-- `excludeChunks`: skip these chunks from division process
-- `divide`: The number of partitioned block which each files will be divided into. The plugin will ignore `option.size` config, when `option.divide` greater than 1
+- `excludeChunks`: skip these chunks from segmentation process
+- `divide`: The number of partitioned block which each files will be divided into. When `option.divide` greater than 1, `split-webpack-plugin` will ignore `option.size`.
 
 ## css
 
-When `options.async:true`, divide-plugin would't partition the files that have been processed by `css-loader` or `style-loader`, so the css files can be loaded immediately. but a better way is to use [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin)。check example: [extract-css](./examples/extract-css).
+When `options.async:true`, divide-plugin would't partition the files that have been processed by `css-loader` or `style-loader`, so the css files can be loaded immediately. but a better way is to use [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin). check example: [extract-css](./examples/extract-css).
+
+All css files are bundled into one file:
+
+```javascript
+var webpackConfig = {
+    plugins: [
+        // ...
+        new ExtractTextPlugin("styles.css")
+    ]
+};
+```
+
+Keep segmented css files:
+
+```javascript
+var webpackConfig = {
+    plugins: [
+        // ...
+        new ExtractTextPlugin("[name].css")
+    ]
+};
+```
 
 [npm-url]: https://www.npmjs.com/package/split-webpack-plugin
 [npm-image]: https://img.shields.io/npm/v/split-webpack-plugin.svg
