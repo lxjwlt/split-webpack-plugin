@@ -80,11 +80,17 @@ class DividePlugin {
                     return chunks;
                 }
 
+                let sortMode = plugin.options.chunksSortMode;
+
+                if (util.majorVersion >= 3 && typeof sortMode === 'undefined') {
+                    sortMode = 'dependency';
+                }
+
                 let targetChunks = plugin.options.chunks;
 
                 // if html-webpack-plugin not specify chunks
                 if (targetChunks === 'all' || !targetChunks) {
-                    return chunks;
+                    return plugin.sortChunks(chunks, sortMode);
                 }
 
                 let allChunks = compilation.getStats().toJson().chunks;
@@ -111,7 +117,7 @@ class DividePlugin {
                     return ids.indexOf(chunk.id) >= 0;
                 });
 
-                return plugin.sortChunks(chunks, plugin.options.chunksSortMode);
+                return plugin.sortChunks(chunks, sortMode);
             });
 
             compilation.plugin('done', () => {
