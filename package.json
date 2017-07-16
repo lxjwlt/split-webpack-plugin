@@ -1,6 +1,6 @@
 {
   "name": "split-webpack-plugin",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Automates division process of files to serve your webpack bundles",
   "main": "src/index.js",
   "scripts": {
