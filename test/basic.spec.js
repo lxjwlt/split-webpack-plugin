@@ -1,4 +1,5 @@
 const DividePlugin = require('../');
+const HtmlPlugin = require('html-webpack-plugin');
 const {createTest, removeTempDir} = require('./util');
 const test = createTest({
     app: {
@@ -393,6 +394,65 @@ describe('DivideWebpackPlugin', function () {
             }, {
                 expectedEntry: 2,
                 chunks: 6
+            }, done);
+        });
+    });
+
+    describe('html-webpack-plugin', function () {
+        it('include chunks', function (done) {
+            test({
+                entry: ['app'],
+                plugins: [
+                    new DividePlugin({
+                        divide: 5,
+                        async: false
+                    }),
+                    new HtmlPlugin({
+                        chunks: ['app']
+                    })
+                ]
+            }, {
+                expectedEntry: 5,
+                chunks: 5
+            }, done);
+        });
+
+        it('exclude chunks', function (done) {
+            test({
+                entry: ['app', 'login'],
+                plugins: [
+                    new DividePlugin({
+                        divide: 2,
+                        async: false
+                    }),
+                    new HtmlPlugin({
+                        excludeChunks: ['app']
+                    })
+                ]
+            }, {
+                expectedEntryMod: ['login'],
+                expectedEntry: 2,
+                chunks: 2
+            }, done);
+        });
+
+        it('include and exclude chunks', function (done) {
+            test({
+                entry: ['app', 'login'],
+                plugins: [
+                    new DividePlugin({
+                        divide: 2,
+                        async: false
+                    }),
+                    new HtmlPlugin({
+                        excludeChunks: ['login'],
+                        chunks: ['app', 'login']
+                    })
+                ]
+            }, {
+                expectedEntryMod: ['app'],
+                expectedEntry: 2,
+                chunks: 2
             }, done);
         });
     });

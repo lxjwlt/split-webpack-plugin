@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const assert = require('chai').assert;
 const fs = require('fs-extra');
-const HtmlPlguin = require('html-webpack-plugin');
+const HtmlPlugin = require('html-webpack-plugin');
 const Browser = require('zombie');
 
 const TEMP_DIR = path.resolve(__dirname, './temp');
@@ -21,9 +21,11 @@ exports.createTest = function (files) {
 
     return function (webpackConfig, config, done) {
         createResource(files).then(() => {
-            webpackConfig.plugins.unshift(new HtmlPlguin());
+            if (webpackConfig.plugins.every((plugin) => !(plugin instanceof HtmlPlugin))) {
+                webpackConfig.plugins.unshift(new HtmlPlugin());
+            }
 
-            let entry = webpackConfig.entry;
+            let entry = config.expectedEntryMod || webpackConfig.entry;
 
             webpackConfig.context = TEMP_DIR;
 
