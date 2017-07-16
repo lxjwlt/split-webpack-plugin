@@ -104,6 +104,14 @@ const util = {
         module.addChunk(newChunk);
         newChunk.addModule(module);
         module.rewriteChunkInReasons(oldChunk, [newChunk]);
+    },
+
+    getModules (chunk) {
+        if (chunk.mapModules) {
+            return chunk.mapModules();
+        } else {
+            return chunk.modules;
+        }
     }
 
 };

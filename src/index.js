@@ -61,7 +61,7 @@ class DividePlugin {
                         bundleMethod = 'doAsyncChunk';
                     }
 
-                    let modulesMap = this.filterModules(chunk.modules, bundleMethod);
+                    let modulesMap = this.filterModules(util.getModules(chunk), bundleMethod);
 
                     let moduleGroups = this.splitModules(modulesMap.includeModules);
 
@@ -238,7 +238,7 @@ class DividePlugin {
     moveChildChunks (oldChunk, newChunk) {
         oldChunk.chunks.forEach((asyncChunk) => {
             asyncChunk.origins.forEach((info) => {
-                if (newChunk.modules.indexOf(info.module) > -1 &&
+                if (util.getModules(newChunk).indexOf(info.module) > -1 &&
                     newChunk.chunks.indexOf(asyncChunk) < 0) {
                     newChunk.addChunk(asyncChunk);
 
