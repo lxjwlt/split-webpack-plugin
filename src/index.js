@@ -22,6 +22,10 @@ class DividePlugin {
             options.chunks = [options.chunks];
         }
 
+        if (typeof options.excludeChunks === 'string') {
+            options.excludeChunks = [options.excludeChunks];
+        }
+
         options.divide = Number(options.divide) || 0;
         options.size = Number(options.size) || 0;
         options.size = options.size * 1024; // KB to B

@@ -128,6 +128,21 @@ describe('DivideWebpackPlugin', function () {
             }, done);
         });
 
+        it('add specific string chunks', function (done) {
+            test({
+                entry: ['app'],
+                plugins: [
+                    new DividePlugin({
+                        chunks: 'login',
+                        divide: 100
+                    })
+                ]
+            }, {
+                expectedEntry: 1,
+                chunks: 1
+            }, done);
+        });
+
         it('empty chunks', function (done) {
             test({
                 entry: ['app', 'login'],
@@ -149,6 +164,21 @@ describe('DivideWebpackPlugin', function () {
                 plugins: [
                     new DividePlugin({
                         excludeChunks: ['login'],
+                        divide: 2
+                    })
+                ]
+            }, {
+                expectedEntry: 2,
+                chunks: 4
+            }, done);
+        });
+
+        it('string exclude chunks', function (done) {
+            test({
+                entry: ['app', 'login'],
+                plugins: [
+                    new DividePlugin({
+                        excludeChunks: 'login',
                         divide: 2
                     })
                 ]
