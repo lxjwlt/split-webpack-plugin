@@ -21,4 +21,5 @@ install:
   - yarn remove extract-text-webpack-plugin
   - yarn add webpack@$WEBPACK_VERSION extract-text-webpack-plugin@$EXTRACT_PLUGIN_VERSION --ignore-scripts || true
 script:
-  - npm test
+  - npm coverage
+  - npm codecov
