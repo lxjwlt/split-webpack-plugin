@@ -2,7 +2,9 @@
 
 ![Node version][node-image]
 [![NPM version][npm-image]][npm-url]
-[![Build status](https://travis-ci.org/lxjwlt/split-webpack-plugin.svg)](https://travis-ci.org/lxjwlt/split-webpack-plugin)
+[![Build status](https://img.shields.io/travis/lxjwlt/split-webpack-plugin/dev.svg)](https://travis-ci.org/lxjwlt/split-webpack-plugin)
+[![codecov](https://img.shields.io/codecov/c/github/lxjwlt/split-webpack-plugin/dev.svg)](https://codecov.io/gh/lxjwlt/split-webpack-plugin/branch/dev)
+
 
 This is a [webpack](http://webpack.github.io/) plugin for Automating segmentation process of files. That can be more helpful when we should split all files manually, especially using multiple third-party libraries. You can simply divide your files by size or the number of eventually segmented files.
 
