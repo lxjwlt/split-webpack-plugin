@@ -119,11 +119,11 @@ class DividePlugin {
 
                 return plugin.sortChunks(chunks, sortMode);
             });
+        });
 
-            compilation.plugin('done', () => {
-                this.entryChunkMap = null;
-                compilationMap.delete(compilation);
-            });
+        compiler.plugin('done', () => {
+            this.entryChunkMap = null;
+            compilationMap.clear();
         });
     }
 
