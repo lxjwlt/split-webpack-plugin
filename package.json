@@ -10,7 +10,7 @@
     "debug": "node --inspect --debug-brk ./node_modules/mocha/bin/_mocha",
     "lint": "eslint '**/*.js'",
     "fix": "npm run lint -- --fix",
-    "coverage": "istanbul cover --root src ./node_modules/mocha/bin/_mocha -R test/*.spec.js",
+    "coverage": "istanbul cover --root src ./node_modules/mocha/bin/_mocha -- --recursive test/*.spec.js",
     "codecov": "codecov"
   },
   "keywords": [
